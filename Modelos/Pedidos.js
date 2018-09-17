@@ -3,6 +3,7 @@ const config = require('./../Config/ConfigDb');
 const _ = require('lodash');
 
 const Pedidos = {
+
     async getAll(vendedor, fecha) {
         try {
             fecha = fecha.replace(/-/g, '/');
@@ -80,6 +81,90 @@ const Pedidos = {
                                                             ))
                                                         }
                                                     ))
+
+                            return res;
+                        })
+
+        } catch (error) {
+            throw error;        
+        }
+    },
+    async getPendientes(vendedor) {
+        try {
+
+            const WFiltroVendedor = vendedor == 99 ? '' : ` AND c.Vendedor = '${vendedor}'` ;
+
+            return new sql.Request().query(`select p.Pedido, p.Cliente, RTRIM(LTRIM(c.Razon)) Razon, c.Vendedor, DescVendedor = CASE WHEN c.Vendedor = '1' THEN 'Directo' ELSE LTRIM(RTRIM(o.Descripcion)) END, p.Fecha As FechaPedido,
+                                             p.FecEntrega As FechaEntrega, Producto = CASE WHEN p.TipoPro = 'M' THEN p.Articulo ELSE p.Terminado END,
+                                             DescProducto = LTRIM(RTRIM(p.NombreComercial)), p.Cantidad, p.Facturado from Pedido p 
+                                             INNER JOIN Cliente c ON C.Cliente = p.Cliente ${WFiltroVendedor} LEFT OUTER JOIN Operador o ON o.Vendedor = c.Vendedor where p.Cantidad > p.Facturado 
+                                             Order by p.Pedido, p.FechaOrd DESC`)
+                        .then(result => {
+                            const {recordset} = result;
+
+                            const res = _(recordset)
+                                            .groupBy('Vendedor')
+                                            .map((Pedidos, vend) => (
+                                                {
+                                                    Vendedor: vend,
+                                                    DescVendedor: Pedidos[0].DescVendedor,
+                                                    Datos: _(Pedidos)
+                                                            .groupBy('Pedido')
+                                                            .map((Productos, ped) => (
+                                                                {
+                                                                    Pedido: ped,
+                                                                    Fecha: Productos[0].FechaPedido,
+                                                                    Cliente: Productos[0].Cliente,
+                                                                    Razon: Productos[0].Razon,
+                                                                    Productos: Productos.map(prod => (
+                                                                        {
+                                                                            Producto: prod.Producto,
+                                                                            DescProducto: prod.DescProducto,
+                                                                            Cantidad: prod.Cantidad,
+                                                                            Facturado: prod.Facturado,
+                                                                        }
+                                                                    ))
+                                                                }
+                                                            ))
+                                                }
+                                            ))
+
+                            return res;
+                        })
+
+        } catch (error) {
+            throw error;        
+        }
+    },
+    async getPendienteDetalle(pedido) {
+        try {
+
+            return new sql.Request().query(`select p.Pedido, p.Cliente, RTRIM(LTRIM(c.Razon)) Razon, c.Vendedor, DescVendedor = CASE WHEN c.Vendedor = '1' THEN 'Directo' ELSE LTRIM(RTRIM(o.Descripcion)) END, p.Fecha As FechaPedido,
+                                             p.FecEntrega As FechaEntrega, Producto = CASE WHEN p.TipoPro = 'M' THEN p.Articulo ELSE p.Terminado END,
+                                             DescProducto = LTRIM(RTRIM(p.NombreComercial)), p.Cantidad, p.Facturado from Pedido p 
+                                             INNER JOIN Cliente c ON C.Cliente = p.Cliente LEFT OUTER JOIN Operador o ON o.Vendedor = c.Vendedor where p.Pedido = '${pedido}' And p.Cantidad > p.Facturado 
+                                             Order by p.Pedido, p.FechaOrd DESC`)
+                        .then(result => {
+                            const {recordset} = result;
+
+                            const res = _(recordset)
+                                            .groupBy('Pedido')
+                                            .map((Productos, ped) => (
+                                                {
+                                                    Pedido: ped,
+                                                    Fecha: Productos[0].FechaPedido,
+                                                    Cliente: Productos[0].Cliente,
+                                                    Razon: Productos[0].Razon,
+                                                    Productos: Productos.map(prod => (
+                                                        {
+                                                            Producto: prod.Producto,
+                                                            DescProducto: prod.DescProducto,
+                                                            Cantidad: prod.Cantidad,
+                                                            Facturado: prod.Facturado,
+                                                        }
+                                                    ))
+                                                }
+                                            ))
 
                             return res;
                         })

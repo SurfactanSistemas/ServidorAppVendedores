@@ -1,8 +1,8 @@
 const config = {
-    user: 'usuarioadmin',
-    password: 'usuarioadmin',
-    server: '193.168.0.7',
-    database: 'SurfactanSa',
+    user: '',
+    password: '',
+    server: '9.9.9.9',
+    database: '',
     options: {
         encrypt: false
     },

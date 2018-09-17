@@ -6,10 +6,78 @@ const router = express.Router();
 router.get('/', (req, res) => res.json({ message: 'funciona!'}));
 
 /*
+Obtiene todas los Renglones referidas a un pedido.
+Pueden indicarse las columnas necesarias o bien ninguna para traer todas.
+*/
+router.get('/Detalles/:hojaRuta(\\d+)/:pedido(\\d+)',(req, res) => {
+    
+    let {hojaRuta, pedido} = req.params;
+
+    Pedidos.getDetalles(hojaRuta, pedido)
+        .then((resultados) => res.json(
+            { error: false, resultados }
+        ))
+        .catch((err) => {
+            res.json(
+                {
+                    error: true,
+                    resultados: [],
+                    ErrorMsg: err.message
+                }
+            )
+        });
+        
+});
+
+/*
     Obtiene todas los Renglones referidas a un pedido.
     Pueden indicarse las columnas necesarias o bien ninguna para traer todas.
 */
-router.get('/:vendedor/:fecha',(req, res) => {
+router.get('/Pendientes/:vendedor(\\d+)',(req, res) => {
+
+    let {vendedor} = req.params;
+
+    Pedidos.getPendientes(vendedor)
+        .then((resultados) => res.json(
+            { error: false, resultados }
+        ))
+        .catch((err) => {
+            res.json(
+                {
+                    error: true,
+                    resultados: [],
+                    ErrorMsg: err.message
+                }
+            )
+        });
+        
+});
+   
+router.get('/Pendientes/Detalles/:pedido(\\d+)',(req, res) => {
+
+    let {pedido} = req.params;
+
+    Pedidos.getPendienteDetalle(pedido)
+        .then((resultados) => res.json(
+            { error: false, resultados }
+        ))
+        .catch((err) => {
+            res.json(
+                {
+                    error: true,
+                    resultados: [],
+                    ErrorMsg: err.message
+                }
+            )
+        });
+        
+});
+
+/*
+    Obtiene todas los Renglones referidas a un pedido.
+    Pueden indicarse las columnas necesarias o bien ninguna para traer todas.
+*/
+router.get('/:vendedor(\\d+)/:fecha',(req, res) => {
 
     const {vendedor, fecha} = req.params;
 
@@ -28,29 +96,4 @@ router.get('/:vendedor/:fecha',(req, res) => {
         });
 
 });
-
-/*
-    Obtiene todas los Renglones referidas a un pedido.
-    Pueden indicarse las columnas necesarias o bien ninguna para traer todas.
-*/
-router.get('/Detalles/:hojaRuta/:pedido',(req, res) => {
-
-    let {hojaRuta, pedido} = req.params;
-
-    Pedidos.getDetalles(hojaRuta, pedido)
-        .then((resultados) => res.json(
-                { error: false, resultados }
-        ))
-        .catch((err) => {
-            res.json(
-                {
-                    error: true,
-                    resultados: [],
-                    ErrorMsg: err.message
-                }
-            )
-        });
-
-});
-
-module.exports = router;
+        module.exports = router;
