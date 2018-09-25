@@ -109,21 +109,20 @@ const Pedidos = {
                                                     Vendedor: vend,
                                                     DescVendedor: Pedidos[0].DescVendedor,
                                                     Datos: _(Pedidos)
-                                                            .groupBy('Pedido')
-                                                            .map((Productos, ped) => (
+                                                            .groupBy('Cliente')
+                                                            .map((Pedidos, cli) => (
                                                                 {
-                                                                    Pedido: ped,
-                                                                    Fecha: Productos[0].FechaPedido,
-                                                                    Cliente: Productos[0].Cliente,
-                                                                    Razon: Productos[0].Razon,
-                                                                    Productos: Productos.map(prod => (
-                                                                        {
-                                                                            Producto: prod.Producto,
-                                                                            DescProducto: prod.DescProducto,
-                                                                            Cantidad: prod.Cantidad,
-                                                                            Facturado: prod.Facturado,
-                                                                        }
-                                                                    ))
+                                                                    Cliente: cli,
+                                                                    Razon: Pedidos[0].Razon,
+                                                                    Pedidos: _(Pedidos)
+                                                                                .groupBy('Pedido')
+                                                                                .map((Pedido, ped) => (
+                                                                                    {
+                                                                                        Pedido: ped,
+                                                                                        Fecha: Pedido[0].FechaPedido,
+                                                                                        CantProd: Pedido.length
+                                                                                    }
+                                                                                ))
                                                                 }
                                                             ))
                                                 }
