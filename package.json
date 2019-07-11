@@ -1,0 +1,14 @@
+{
+  "name": "Servidor",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Gaston Ferreyra",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "mssql": "^4.1.0"
+  }
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Control de Alarmas - Surfactan</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <style>
+        body {
+            background-color: #070782;
+        }
+        .container-main{
+            height: 100vh;
+            
+            color: white;
+        }
+        .btn-alarma {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120px;
+            width: 120px;
+            margin-top: 5px;
+        }
+        .btn-row {
+            padding: 20px;
+            box-shadow: 0px 0px 15px 1px #a0a0a0;
+            margin: 10px;
+        }
+        .btn-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-light.disabled, .btn-light:disabled {
+            box-shadow: 0px 0px 6px 1px #636363 inset;
+        }
+        .cabecera {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .surfac {
+            font-weight: bold;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;    
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid container-main ">
+        <div class="row cabecera">
+            <div class="col-xs-6 surfac">
+                    <img src="./img/SBlanca.png" alt="Logo Surfactan">
+
+                    SURFACTAN
+            </div>
+        </div>
+        <div class="row btn-row">
+
+            <div class="col-sm-3 btn-col">
+                <button id="Surfac1" class="btn btn-alarma btn-block btn-light" data-ip="193.168.0.85">
+                    Surfactan 1
+                </button>
+            </div>
+            <div class="col-sm-3 btn-col">
+                <button id="Surfac2" class="btn btn-alarma btn-block btn-light" data-ip="193.168.0.86">
+                    Surfactan 2
+                </button>
+            </div>
+            <div class="col-sm-3 btn-col">
+                <button id="Surfac3" class="btn btn-alarma btn-block btn-light" data-ip="193.168.0.88">
+                    Surfactan 3
+                </button>
+            </div>
+            <div class="col-sm-3 btn-col">
+                <button id="Surfac4" class="btn btn-alarma btn-block btn-light" data-ip="193.168.0.89">
+                    Surfactan 4
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="jquery.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/js-cookie.js"></script>
+    <script>
+
+        const ENDPOINT = "http://201.231.98.97";
+        
+        // if (location.href.startsWith('http://127.0.0.1:5500/')){
+        //     Cookies.set('PermisosAlarmas', '0100');
+        // }
+
+        $(document).ready(function() {
+
+            let WPermisos = Cookies.get('PermisosAlarmas');
+            
+            console.log(`Permisos de Alarmas: ${WPermisos}`)
+            
+            if (!WPermisos) location.href = `${ENDPOINT}/Alarmas/Login`;
+
+            for (let i = 1; i <= 4; i++){
+                let desactivo = WPermisos.substring(i-1, i);
+                if (desactivo == '0'){
+                    $(`#Surfac${i}`).attr('disabled', true);
+                    $(`#Surfac${i}`).addClass('btn-light');
+                }else{
+                    $(`#Surfac${i}`).removeClass('btn-light');
+                    $(`#Surfac${i}`).addClass('btn-danger');
+                }
+
+            }
+            
+            let contador = null;
+
+            $('.btn-alarma').click(function() {
+                let btn = $(this);
+                let ip = btn.data('ip');
+
+                if (!contador){
+
+                    fetch(`${ENDPOINT}/Alarma/${ip}/1X`).then(r => {
+
+                        contador = setInterval(function(){
+                            btn.toggleClass('btn-danger');
+                            btn.toggleClass('btn-success');
+
+                            fetch(`${ENDPOINT}/Alarma/Estado/${ip}`)
+                            .then(res => res.json())
+                            .then(resJson => {
+                                let {Estado} = resJson;
+                                console.log('Estado' + Estado);
+                                if (Estado == '00000000'){
+                                    clearInterval(contador);
+                                    btn.removeClass('btn-success').addClass('btn-danger');
+                                    contador= null;
+                                }
+                            }).catch(e => console.log(e))
+
+                        }, 1000);
+
+                    }).catch(e => console.log('No se ha podido conectar al servidor...'))
+
+                }else{
+                    fetch(`${ENDPOINT}/Alarma/${ip}/2X`).then(r => {
+                        clearInterval(contador);
+                        btn.removeClass('btn-success').addClass('btn-danger');
+                        contador= null;
+                    }).catch(e => console.log('No se ha podido conectar al servidor...'))
+                }
+                
+            });
+
+        })
+    </script>
+</body>
+</html>
