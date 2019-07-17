@@ -14,13 +14,74 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
+  padding-top: 1.5em;
   font-size: calc(10px + 2vmin);
   color: white;
+  transition: all 500ms ease-in-out;
 }
 
 .App-link {
   color: #61dafb;
+}
+
+.alert {
+  padding: 5px;
+  font-size: 1.5rem;
+}
+
+.alert-danger {
+  background-color: #f34747;
+  border-color: #da0a2b;
+  color: #efc7c7;
+}
+
+.alert-info {
+  background-color: #aacfe2;
+  border-color: #00d4ff;
+  color: #003954;
+}
+
+.panel {
+  color: #0e0e0e;
+  animation: Aparecer-msg-prov-gral 1.3s ease-in-out;
+}
+
+.panel-body {
+  padding: 10px 10px;
+  font-size: 1.5rem;
+}
+
+.rd-navbar-fullwidth .rd-navbar-main-outer {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.rd-navbar-wrap {
+  max-height: 143px;
+}
+
+.ventana-modal > p {
+  margin: 10px 0;
+}
+
+.ventana-modal > button {
+  margin-top: 20px;
+}
+
+.btn-anotarse[disabled] {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+  text-decoration: line-through;
+}
+
+@keyframes Aparecer-msg-prov-gral {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes App-logo-spin {

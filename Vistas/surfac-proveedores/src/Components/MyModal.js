@@ -3,14 +3,20 @@ import { Modal,Effect} from 'react-dynamic-modal';
 
 class MyModal extends Component{
    render(){
-      const { titulo, cuerpo, onRequestClose, onModalClose } = this.props;
+      let { titulo, cuerpo, onRequestClose, onModalClose, stylesBtn } = this.props;
+      stylesBtn = stylesBtn || 'btn-primary';
       return (
          <Modal
-            onRequestClose={onRequestClose}
+            style={{content: {width: '50%', minWidth: '400px', padding: '10px'}}}
+            onRequestClose={() => onRequestClose}
             effect={Effect.ScaleUp}>
-            <h1>{titulo}</h1>
-            <p>{cuerpo}</p>
-            <button className="btn btn-primary btn-block" onClick={onModalClose}>Entendido</button>
+            <div className="ventana-modal col-xs-12">
+               <h4>{titulo}</h4>
+               { cuerpo.map((c, i) => (
+                  <p key={i}>{c}</p>
+               )) }
+               <button className={`btn btn-block ${stylesBtn}`} onClick={onModalClose}>Entendido</button>
+            </div>
          </Modal>
       );
    }

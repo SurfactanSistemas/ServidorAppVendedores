@@ -1,6 +1,7 @@
 const express = require('express');
 const sql = require('mssql');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const config = require('./Config/ConfigDb');
 
 // Include Nodejs' net module.
@@ -14,6 +15,7 @@ const Precios = require('./Rutas/Api/Precios');
 const Pedidos = require('./Rutas/Api/Pedidos');
 const Login = require('./Rutas/Api/Login');
 const AniosFiltro = require('./Rutas/Api/AniosFiltro');
+const Proveedores = require('./Rutas/Api/Proveedores');
 const app = express();
 
 app.use(express.static('./Vistas'));
@@ -44,6 +46,7 @@ app.use('/Api/Pedidos', Pedidos);
 app.use('/Api/Login', Login);
 
 app.use('/Api/AniosFiltro', AniosFiltro);
+app.use('/Api/Proveedores', cors(), Proveedores);
 
 /*
  * Ruta para control de alarmas. 
@@ -151,7 +154,7 @@ let _ProcesarAlarma = (disp, cmd) => {
 
 
 
-// app.listen(80, () => console.log('Servidor corriendo...'));
+app.listen(80, () => console.log('Servidor corriendo...'));
 
-app.listen(5500, () => console.log('Servidor corriendo...'));
+// app.listen(5500, () => console.log('Servidor corriendo...'));
 
