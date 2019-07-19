@@ -33,7 +33,7 @@ const Proveedores = {
     },
     async Login(Cuit, Password){
         try {
-            return new sql.Request().query(`SELECT p.Proveedor, p.Nombre, pw.ID, pw.Habilitado, FechaAnotacion = (SELECT pswc.FechaSelectivo FROM ProveedorSelectivoWebConfig pswc INNER JOIN ProveedorSelectivoWeb psw ON psw.IDFechaSelectivo = pswc.ID WHERE ISNULL(pswc.Habilitado, '0') = '1' And psw.IDProveedor = pw.ID)  FROM Proveedor p INNER JOIN ProveedorWeb pw ON pw.Cuit = p.Cuit WHERE pw.Cuit = '${Cuit}' And pw.Clave = '${Password}'`)
+            return new sql.Request().query(`SELECT p.Proveedor, p.Nombre, pw.ID, pw.Habilitado, FechaAnotacion = ISNULL((SELECT pswc.FechaSelectivo FROM ProveedorSelectivoWebConfig pswc INNER JOIN ProveedorSelectivoWeb psw ON psw.IDFechaSelectivo = pswc.ID WHERE ISNULL(pswc.Habilitado, '0') = '1' And psw.IDProveedor = pw.ID), '')  FROM Proveedor p INNER JOIN ProveedorWeb pw ON pw.Cuit = p.Cuit WHERE pw.Cuit = '${Cuit}' And pw.Clave = '${Password}'`)
                                     .then(result => result.recordset);
         } catch (error) {
             throw error;
