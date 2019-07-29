@@ -335,6 +335,7 @@ class App extends React.Component {
                 this.setState({
                     _Loading: false,
                     successMsg: '',
+                    _activeControls: false,
                     errorMsg: `Las credenciales que se han indicado no son correctas.`
                 }, () => this._cuitLoginInput.focus());
                 return;
@@ -346,6 +347,7 @@ class App extends React.Component {
                 this.setState({
                     _Loading: false,
                     successMsg: '',
+                    _activeControls: false,
                     errorMsg: `Las credenciales que se han indicado no son correctas.`
                 }, () => this._cuitLoginInput.focus());
                 return;
