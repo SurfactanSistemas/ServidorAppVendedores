@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo service apache2 stop;
+sudo forever stopall;
+cd /var/www/html;
+sudo forever start server.js;
