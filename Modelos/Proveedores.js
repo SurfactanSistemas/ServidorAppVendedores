@@ -41,7 +41,7 @@ const Proveedores = {
     },
     async traerSelectivoConfig(){
         try {
-            const req =  await new sql.Request().query(`SELECT ID, FechaSelectivo Fecha, Mensaje Msg FROM ProveedorSelectivoWebConfig WHERE ISNULL(Habilitado, '0') = '1' ORDER BY ID DESC`)
+            const req =  await new sql.Request().query(`SELECT ID, FechaSelectivo Fecha, FechaInicio, Mensaje Msg FROM ProveedorSelectivoWebConfig WHERE ISNULL(Habilitado, '0') = '1' ORDER BY ID DESC`)
                                     .then(result => result.recordset);
             return req;
 

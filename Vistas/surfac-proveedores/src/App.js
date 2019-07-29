@@ -4,6 +4,16 @@ import Loader from 'react-loader-spinner';
 import './App.css';
 import {fetchPost} from './Auxis/Helpers';
 
+const FechaEsAnterior = (Actual = '', AComparar = '') => {
+    console.table({Actual, AComparar})
+    return parseInt(Actual.split('/').reverse().join('')) < parseInt(AComparar.split('/').reverse().join(''))
+}
+
+const getFechaActual = () => {
+    const _fechaActual = new Date();
+    return _fechaActual.getDate() + '/' + (_fechaActual.getMonth()+1).toString().padStart(2, '0') + '/' + _fechaActual.getFullYear()
+};
+
 class App extends React.Component {
     // Controles.
     _cuitLoginInput = null;
@@ -27,7 +37,7 @@ class App extends React.Component {
     
     constructor(props){
         super(props);
-        this.state = {value:'', pass: '', confirmPass: '', ProximaFechaAnotacion: '', MsgGeneral: '', errorMsg: '', successMsg: '', _Loading: false, _RegisterMode: false, WProv: {
+        this.state = {value:'', pass: '', confirmPass: '', ProximaFechaAnotacion: '', FechaInicio: '', MsgGeneral: '', errorMsg: '', successMsg: '', _Loading: false, _RegisterMode: false, WProv: {
             Nombre: '',
             ID: 0,
             Habilitado: '0',
@@ -98,17 +108,9 @@ class App extends React.Component {
                         { this.state.successMsg !== '' ? <div className="alert alert-success" role="alert">{this.state.successMsg}</div> : null }
                         <div className="alert alert-primary" role="alert">
                             <p><span style={{fontWeight: 'bold', textTransform: 'uppercase', fontSize: '2rem'}}>{this.state.WProv.Nombre}</span></p>
-                            {
-                                (this.state.WProv.FechaAnotacion === '') ?
-                                <p style={{opacity: this.state.ProximaFechaAnotacion !== '' ? '1' : '0'}}>
-                                    Recuerde que se está anotando para los pagos que se realizarán el día {this.state.ProximaFechaAnotacion}.
-                                </p> :
-                                <p style={{opacity: this.state.WProv.FechaAnotacion !== '' ? '1' : '0'}}>
-                                    Recuerde que ya se encuentra anotado para la Fecha {this.state.WProv.FechaAnotacion}.
-                                </p>
-                            }
+                            {this.renderAvisoFechasSelectivo()}
                         </div>
-                        <input disabled={this._activeControls || this.state.WProv.FechaAnotacion !== ''} type="submit" value="ANOTARSE PARA PAGO SEMANAL" className="form-control btn btn-success btn-block btn-anotarse"/>
+                        <input disabled={this.state._activeControls || this.state.WProv.FechaAnotacion !== '' || FechaEsAnterior(getFechaActual(), this.state.FechaInicio)} type="submit" value="ANOTARSE PARA PAGO SEMANAL" className="form-control btn btn-success btn-block btn-anotarse"/>
                         <button onClick={this.onLogOutClick} style={{color: 'white'}} className="form-control btn btn-link btn-block">CERRAR SESIÓN</button>
                     </div>
                 </form>
@@ -121,15 +123,15 @@ class App extends React.Component {
             <div style={{ display: !this.state._RegisterMode && !this.state._Loading && !this.state._loggedIn ? 'block' : 'none' }}>
                 <form action="/" onSubmit={this.onSubmitHandle}>
                     <div className="form-group">
-                        <InputMask disabled={this._activeControls} type="text" name="cuit" placeholder="Ingrese su CUIT" value={this.state.value} mask={'99-99999999-9'} maskChar={' '} className="form-control text-center" onChange={e => this.handleCuitOnChange(e)} autoFocus inputRef={c => this._cuitLoginInput = c} />
+                        <InputMask disabled={this.state._activeControls} type="text" name="cuit" placeholder="Ingrese su CUIT" value={this.state.value} mask={'99-99999999-9'} maskChar={' '} className="form-control text-center" onChange={e => this.handleCuitOnChange(e)} autoFocus inputRef={c => this._cuitLoginInput = c} />
                     </div>
                     <div className="form-group">
-                        <input disabled={this._activeControls} type="password" name="pass" placeholder="Ingrese su Contraseña" value={this.state.pass} className="form-control text-center" onChange={e => this.handlePasswordOnChange(e)} ref={c => this._passLoginInput = c} />
+                        <input disabled={this.state._activeControls} type="password" name="pass" placeholder="Ingrese su Contraseña" value={this.state.pass} className="form-control text-center" onChange={e => this.handlePasswordOnChange(e)} ref={c => this._passLoginInput = c} />
                     </div>
                     <div className="form-group">
                         { this.state.errorMsg !== '' ? <div className="alert alert-danger" role="alert">{this.state.errorMsg}</div> : null }
                         { this.state.successMsg !== '' ? <div className="alert alert-success" role="alert">{this.state.successMsg}</div> : null }
-                        <input disabled={this._activeControls} type="submit" value="INGRESAR" className="form-control btn btn-success btn-block"/>
+                        <input disabled={this.state._activeControls} type="submit" value="INGRESAR" className="form-control btn btn-success btn-block"/>
                         <button onClick={this.toggleRegisterMode} style={{color: 'white'}} className="form-control btn btn-link btn-block">REGISTRARSE</button>
                     </div>
                 </form>
@@ -142,18 +144,18 @@ class App extends React.Component {
             <div style={{ display: this.state._RegisterMode && !this.state._Loading && !this.state._loggedIn ? 'block' : 'none' }}>
                 <form action="/" onSubmit={this.onRegisterSubmitHandle}>
                     <div className="form-group">
-                        <InputMask disabled={this._activeControls} type="text" name="cuit" placeholder="Ingrese su CUIT" value={this.state.value} mask={'99-99999999-9'} maskChar={' '} className="form-control text-center" onChange={e => this.handleCuitRegisterOnChange(e)} autoFocus inputRef={c => this._cuitRegisterInput = c} />
+                        <InputMask disabled={this.state._activeControls} type="text" name="cuit" placeholder="Ingrese su CUIT" value={this.state.value} mask={'99-99999999-9'} maskChar={' '} className="form-control text-center" onChange={e => this.handleCuitRegisterOnChange(e)} autoFocus inputRef={c => this._cuitRegisterInput = c} />
                     </div>
                     <div className="form-group">
-                        <input disabled={this._activeControls} type="password" name="pass" placeholder="Ingrese su Contraseña" value={this.state.pass} className="form-control text-center" onChange={e => this.handlePasswordRegisterOnChange(e)} ref={c => this._passRegisterInput = c} />
+                        <input disabled={this.state._activeControls} type="password" name="pass" placeholder="Ingrese su Contraseña" value={this.state.pass} className="form-control text-center" onChange={e => this.handlePasswordRegisterOnChange(e)} ref={c => this._passRegisterInput = c} />
                     </div>
                     <div className="form-group">
-                        <input disabled={this._activeControls} type="password" name="confirm-pass" placeholder="Confirme su Contraseña" value={this.state.confirmPass} className="form-control text-center form-danger" onChange={e => this.handleConfirmPasswordOnChange(e)} ref={c => this._confirmPassInput = c} />
+                        <input disabled={this.state._activeControls} type="password" name="confirm-pass" placeholder="Confirme su Contraseña" value={this.state.confirmPass} className="form-control text-center form-danger" onChange={e => this.handleConfirmPasswordOnChange(e)} ref={c => this._confirmPassInput = c} />
                     </div>
                     <div className="form-group">
                         { this.state.errorMsg !== '' ? <div className="alert alert-danger" role="alert">{this.state.errorMsg}</div> : null }
                         { this.state.successMsg !== '' ? <div className="alert alert-success" role="alert">{this.state.successMsg}</div> : null }
-                        <input disabled={this._activeControls} type="submit" value="REGISTRARSE" className="form-control btn btn-success btn-block" />
+                        <input disabled={this.state._activeControls} type="submit" value="REGISTRARSE" className="form-control btn btn-success btn-block" />
                         <button onClick={this.toggleRegisterMode} style={{color: 'white'}} className="form-control btn btn-link btn-block">INGRESAR</button>
                     </div>
                 </form>
@@ -161,6 +163,32 @@ class App extends React.Component {
         );
     }
     
+    renderAvisoFechasSelectivo() {
+
+        if (this.state.WProv.FechaAnotacion === ''){
+            if (FechaEsAnterior(getFechaActual(), this.state.FechaInicio)){
+                return (
+                    <p>
+                        El próximo período para poder anotarse comienza el {this.state.FechaInicio}.
+                    </p>
+                )
+            }else{
+                return (
+                    <p style={{ opacity: this.state.ProximaFechaAnotacion !== '' ? '1' : '0' }}>
+                        Recuerde que se está anotando para los pagos que se realizarán el día {this.state.ProximaFechaAnotacion}.
+                    </p>
+                )
+            }
+
+        }else if (this.state.WProv.FechaAnotacion !== ''){
+            return (
+                <p style={{ opacity: this.state.WProv.FechaAnotacion !== '' ? '1' : '0' }}>
+                    Recuerde que ya se encuentra anotado para la Fecha {this.state.WProv.FechaAnotacion}.
+                </p>
+            )
+        }
+    }
+
     /**
      * Handles.
      */
@@ -204,7 +232,8 @@ class App extends React.Component {
                 this.setState({
                     _Loading: false,
                     successMsg: MsgExito,
-                    errorMsg: MsgError
+                    errorMsg: MsgError,
+                    _activeControls: res.resultados
                 });
 
             });
@@ -330,14 +359,18 @@ class App extends React.Component {
             let {resultados: [SelectConfig]} = await WSelectivoConfig.json();
             let FechaAnot = '';
             let MsgGral = '';
+            let FechaIni = '';
             
             if (SelectConfig){
-                FechaAnot = SelectConfig.Fecha;
+                FechaAnot = SelectConfig.Fecha || '';
+                FechaIni = SelectConfig.FechaInicio || '';
                 MsgGral = SelectConfig.Msg || '';
             }
 
+            console.table({FechaAnot, FechaIni, MsgGral})
+
             this.setState({
-                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, _loggedIn: true, _Loading: false, WProv: Prv
+                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, FechaInicio: FechaIni, _loggedIn: true, _Loading: false, WProv: Prv
             });
 
         } catch (error) {
@@ -355,7 +388,7 @@ class App extends React.Component {
         e.preventDefault();
         this.setState({ 
             errorMsg: '', successMsg: '', _loggedIn: false, _RegisterMode: false,
-            value: '', pass: '', confirmPass: '', _Loading: false, MsgGeneral: ''
+            value: '', pass: '', confirmPass: '', _Loading: false, MsgGeneral: '', _activeControls: false
         }, () => {
             this._cuitLoginInput.focus();
         });

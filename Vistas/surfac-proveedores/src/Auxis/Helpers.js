@@ -1,4 +1,4 @@
-// const BASE_URL = "http://7944b6b5.ngrok.io"; // Desarrollo
+// const BASE_URL = "http://a61b79d7.ngrok.io"; // Desarrollo
 const BASE_URL = "http://201.231.98.97"; // Produccion
 
 export function getUrlConsulta(){

@@ -84,7 +84,7 @@ router.post('/RegistrarNuevoProveedor', async (req, res) => {
 router.post('/AnotarProveedorSelectivo',(req, res) => {
     const {IDProveedor} = req.body;
 
-    Proveedor.ProximaFechaSelectivo()
+    Proveedor.traerSelectivoConfig()
         .then(resultados => {
             if (!resultados){
                 res.json({
