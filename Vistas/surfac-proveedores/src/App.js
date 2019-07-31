@@ -5,7 +5,7 @@ import './App.css';
 import {fetchPost} from './Auxis/Helpers';
 
 const FechaEsAnterior = (Actual = '', AComparar = '') => {
-    console.table({Actual, AComparar});
+    //console.table({Actual, AComparar});
     return parseInt(Actual.split('/').reverse().join('')) < parseInt(AComparar.split('/').reverse().join(''))
 }
 
@@ -286,7 +286,7 @@ class App extends React.Component {
         try {
             const req = await fetchPost('/RegistrarNuevoProveedor',{Cuit: this.state.value, Password: this.state.pass});
             const res = await req.json(); 
-            console.log(res);
+            // console.log(res);
             // Controlamos que el Proveedor no se haya registrado con anterioridad al Sistema.
             if (res.error){
                 this.setState({
@@ -376,10 +376,10 @@ class App extends React.Component {
                 MsgGral = SelectConfig.Msg || '';
             }
 
-            console.table({FechaAnot, FechaIni, MsgGral})
+            //console.table({FechaAnot, FechaIni, MsgGral})
 
             this.setState({
-                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, FechaInicio: FechaIni, _loggedIn: true, _Loading: false, WProv: Prv
+                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, FechaInicio: FechaIni, _loggedIn: true, _Loading: false, WProv: Prv, pass: '', confirmPass: ''
             });
 
         } catch (error) {

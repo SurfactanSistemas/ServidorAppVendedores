@@ -154,7 +154,7 @@ let _ProcesarAlarma = (disp, cmd) => {
 
 
 
-app.listen(80, () => console.log('Servidor corriendo...'));
+// app.listen(80, () => console.log('Servidor corriendo...'));
 
-//  app.listen(5500, () => console.log('Servidor corriendo...'));
+// app.listen(5500, () => console.log('Servidor corriendo...'));
 
