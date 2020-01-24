@@ -12,6 +12,7 @@ sql.connect(config);
 const Muestras = require('./Rutas/Api/Muestras');
 const Estadisticas = require('./Rutas/Api/Estadisticas');
 const Precios = require('./Rutas/Api/Precios');
+const CtasCtes = require('./Rutas/Api/CtasCtes');
 const Pedidos = require('./Rutas/Api/Pedidos');
 const Login = require('./Rutas/Api/Login');
 const AniosFiltro = require('./Rutas/Api/AniosFiltro');
@@ -40,6 +41,7 @@ app.use('/Api/Muestras', Muestras);
 app.use('/Api/Estadisticas', Estadisticas);
 
 app.use('/Api/Precios', Precios);
+app.use('/Api/CtasCtes', CtasCtes);
 
 app.use('/Api/Pedidos', Pedidos);
 
@@ -154,7 +156,7 @@ let _ProcesarAlarma = (disp, cmd) => {
 
 
 
-// app.listen(80, () => console.log('Servidor corriendo...'));
+app.listen(80, () => console.log('Servidor corriendo...'));
 
-// app.listen(5500, () => console.log('Servidor corriendo...'));
+//app.listen(5500, () => console.log('Servidor corriendo...'));
 
