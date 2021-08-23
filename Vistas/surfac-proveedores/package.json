@@ -2,7 +2,7 @@
   "name": "surfac-proveedores",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://www.surfactan.com.ar/proveedores",
+  "homepage" : "proveedores",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

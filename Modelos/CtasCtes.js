@@ -8,7 +8,7 @@ const CtasCtes = {
             let WFiltroVendedor = vendedor == 99 ? '' : ` v.Vendedor = '${vendedor}'`;
 
             return new sql.Request()
-                .query(`select cc.Cliente, c.Razon, c.Vendedor, v.Nombre, Total = round(sum(cc.Total), 2), TotalUs = round(sum(cc.Total/cc.paridad), 2), Saldo = round(sum(cc.Saldo), 2), SaldoUs = round(sum(cc.Saldo/cc.Paridad), 2) from ctacte cc INNER JOIN Cliente c ON c.Cliente = cc.Cliente INNER JOIN Vendedor v ON v.Vendedor = c.Vendedor WHERE v.Vendedor = '${vendedor}' and cc.Saldo <> 0 group by cc.Cliente, c.Razon, c.Vendedor, v.Nombre order by cc.Cliente`)
+                .query(`select cc.Cliente, c.Razon, c.Vendedor, v.Nombre, Saldo = round(sum(cc.Total), 2), SaldoUs = round(sum(cc.Total/cc.paridad), 2), Total = round(sum(cc.Saldo), 2), TotalUs = round(sum(cc.Saldo/cc.Paridad), 2) from ctacte cc INNER JOIN Cliente c ON c.Cliente = cc.Cliente INNER JOIN Vendedor v ON v.Vendedor = c.Vendedor WHERE v.Vendedor = '${vendedor}' And cc.Saldo <> 0 group by cc.Cliente, c.Razon, c.Vendedor, v.Nombre order by cc.Cliente`)
                 .then(result => {
                     const {recordset} = result;
                     let res = _(recordset)
@@ -30,7 +30,7 @@ const CtasCtes = {
     async getAllCliente(vendedor, cliente) {
         try {
             return new sql.Request()
-                .query(`select cc.Impre, cc.Cliente, c.Razon, c.Vendedor, v.Nombre, cc.Paridad, CC.Numero, cc.Fecha, Total = round(cc.Total, 2), TotalUs = round(cc.Total / cc.Paridad, 2), Saldo = round(cc.Saldo, 2), SaldoUs = round(cc.Saldo / cc.Paridad, 2) from ctacte cc INNER JOIN Cliente c ON c.Cliente = cc.Cliente INNER JOIN Vendedor v ON v.Vendedor = c.Vendedor WHERE cc.Saldo <> 0 and cc.cliente = '${cliente}' order by cc.OrdFecha`)
+                .query(`select cc.Impre, cc.Cliente, c.Razon, c.Vendedor, v.Nombre, cc.Paridad, CC.Numero, cc.Fecha, Total = round(cc.Total, 2), TotalUs = round(cc.Total / cc.Paridad, 2), Saldo = round(cc.Saldo, 2), SaldoUs = round(cc.Saldo / cc.Paridad, 2) from ctacte cc INNER JOIN Cliente c ON c.Cliente = cc.Cliente INNER JOIN Vendedor v ON v.Vendedor = c.Vendedor WHERE cc.cliente = '${cliente}' And cc.Saldo <> 0 order by cc.OrdFecha`)
                 .then(result => {
                     const {recordset} = result;
                     let res = _(recordset)
