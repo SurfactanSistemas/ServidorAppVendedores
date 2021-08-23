@@ -1,89 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Control de Alarmas - Surfactan</title>
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
-    <style>
-        body {
-            background-color: #070782;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .centrar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .cabecera {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="row centrar">
-            <div class="col-xs-12">
-                <div class="row cabecera">
-                    <img src="./img/SBlanca.png" alt="Logo Surfactan">
-                    SURFACTAN S.A.
-                </div>
-                <div class="row centrar">
-                    <form action="" id="formulario">
-                        <div class="form-group">
-                            <input type="password" id="password" class="form-control" placeholder="Ingrese Contraseña..." style="text-align: center; margin-bottom: 10px;" autofocus>
-                            <button type="submit" class="form-control btn btn-primary">Iniciar Sesión</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="jquery.js"></script>
-    <script src="./js/bootstrap.bundle.min.js"></script>
-    <script src="./js/js-cookie.js"></script>
-    <script>
-        const ENDPOINT = "http://201.231.98.97";
-        
-        $(document).ready(() => {
-
-            Cookies.remove('PermisosAlarmas');
-
-            $("#formulario").submit((e) => {
-                // localStorage.setItem("Permisos", "1111");
-                // location.href = "/";
-                e.preventDefault();
-
-                let WPass = $('#password').val();
-
-                fetch(`${ENDPOINT}/Api/Login/${WPass}`, {'mode': 'no-cors'})
-                    .then(res => res.json())
-                    .then(resJson => {
-                        let {error, resultados} = resJson;
-                        if (resultados.length > 0) {
-                            Cookies.set('PermisosAlarmas', resultados[0].PermisosAlarma);
-                            location.href = `${ENDPOINT}/Alarmas`;
-                        }
-                    })
-                    .catch(e => console.error(e))
-
-                return false;
-            })
-        })
-    </script>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Control de Alarmas - Surfactan</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <style>
+        body {
+            background-color: #070782;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .centrar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row centrar">
+            <div class="col-xs-12">
+                <div class="row cabecera">
+                    <img src="./img/SBlanca.png" alt="Logo Surfactan">
+                    SURFACTAN S.A.
+                </div>
+                <div class="row centrar">
+                    <form action="" id="formulario">
+                        <div class="form-group">
+                            <input type="password" id="password" class="form-control" placeholder="Ingrese Contraseña..." style="text-align: center; margin-bottom: 10px;" autofocus>
+                            <button type="submit" class="form-control btn btn-primary">Iniciar Sesión</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="jquery.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/js-cookie.js"></script>
+    <script>
+        const ENDPOINT = "http://201.231.98.97";
+        
+        $(document).ready(() => {
+
+            Cookies.remove('PermisosAlarmas');
+
+            $("#formulario").submit((e) => {
+                // localStorage.setItem("Permisos", "1111");
+                // location.href = "/";
+                e.preventDefault();
+
+                let WPass = $('#password').val();
+
+                fetch(`${ENDPOINT}/Api/Login/${WPass}`, {'mode': 'no-cors'})
+                    .then(res => res.json())
+                    .then(resJson => {
+                        let {error, resultados} = resJson;
+                        if (resultados.length > 0) {
+                            Cookies.set('PermisosAlarmas', resultados[0].PermisosAlarma);
+                            location.href = `${ENDPOINT}/Alarmas`;
+                        }
+                    })
+                    .catch(e => console.error(e))
+
+                return false;
+            })
+        })
+    </script>
+</body>
 </html>

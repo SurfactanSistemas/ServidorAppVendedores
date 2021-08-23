@@ -5,7 +5,7 @@ import './App.css';
 import {fetchPost} from './Auxis/Helpers';
 
 const FechaEsAnterior = (Actual = '', AComparar = '') => {
-    //console.table({Actual, AComparar});
+    console.table({Actual, AComparar})
     return parseInt(Actual.split('/').reverse().join('')) < parseInt(AComparar.split('/').reverse().join(''))
 }
 
@@ -49,8 +49,8 @@ class App extends React.Component {
         return (
             <div className="App">
                 <header className="App-header" style={{ paddingTop: (!this.state._loggedIn) ? '3em' : '1.5em' }}>
-                    <div className={this.state._loggedIn ? "col-xs-1 col-md-3" : "col-xs-1 col-md-2"}></div>
-                    <div className={this.state._loggedIn ? "col-xs-10 col-md-6" : "col-xs-10 col-md-4"}>
+                    <div className="col-xs-1 col-md-2"></div>
+                    <div className="col-xs-10 col-md-4">
                         <p style={{ fontSize: '3rem', fontWeight: 'bold' }}>
                             BIENVENIDO
                         </p>
@@ -168,17 +168,9 @@ class App extends React.Component {
         if (this.state.WProv.FechaAnotacion === ''){
             if (FechaEsAnterior(getFechaActual(), this.state.FechaInicio)){
                 return (
-                    <div>
-                        <p>
-                            El período actual para poder anotarse para la Fecha de Pago {this.state.ProximaFechaAnotacion}, se ecnuentra cerrada.
-                            El próximo comienza el {this.state.FechaInicio} con Fecha de Pago {this.state.ProximaFechaAnotacion}. 
-                            <button disabled={this.state._activeControls} className="btn btn-block btn-primary btn-anotarse" onClick={this.onSuscribeSubmitHandle}>
-                                ¿Desea anotarse para la Fecha {this.state.ProximaFechaAnotacion}?
-                                <br/>
-                                Haga click acá
-                            </button>
-                        </p>
-                    </div>
+                    <p>
+                        El próximo período para poder anotarse comienza el {this.state.FechaInicio}.
+                    </p>
                 )
             }else{
                 return (
@@ -187,6 +179,7 @@ class App extends React.Component {
                     </p>
                 )
             }
+
         }else if (this.state.WProv.FechaAnotacion !== ''){
             return (
                 <p style={{ opacity: this.state.WProv.FechaAnotacion !== '' ? '1' : '0' }}>
@@ -286,7 +279,7 @@ class App extends React.Component {
         try {
             const req = await fetchPost('/RegistrarNuevoProveedor',{Cuit: this.state.value, Password: this.state.pass});
             const res = await req.json(); 
-            // console.log(res);
+            console.log(res);
             // Controlamos que el Proveedor no se haya registrado con anterioridad al Sistema.
             if (res.error){
                 this.setState({
@@ -342,7 +335,6 @@ class App extends React.Component {
                 this.setState({
                     _Loading: false,
                     successMsg: '',
-                    _activeControls: false,
                     errorMsg: `Las credenciales que se han indicado no son correctas.`
                 }, () => this._cuitLoginInput.focus());
                 return;
@@ -354,7 +346,6 @@ class App extends React.Component {
                 this.setState({
                     _Loading: false,
                     successMsg: '',
-                    _activeControls: false,
                     errorMsg: `Las credenciales que se han indicado no son correctas.`
                 }, () => this._cuitLoginInput.focus());
                 return;
@@ -376,10 +367,10 @@ class App extends React.Component {
                 MsgGral = SelectConfig.Msg || '';
             }
 
-            //console.table({FechaAnot, FechaIni, MsgGral})
+            console.table({FechaAnot, FechaIni, MsgGral})
 
             this.setState({
-                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, FechaInicio: FechaIni, _loggedIn: true, _Loading: false, WProv: Prv, pass: '', confirmPass: ''
+                errorMsg: '', successMsg: '', MsgGeneral: MsgGral, ProximaFechaAnotacion: FechaAnot, FechaInicio: FechaIni, _loggedIn: true, _Loading: false, WProv: Prv
             });
 
         } catch (error) {

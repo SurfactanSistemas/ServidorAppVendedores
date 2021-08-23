@@ -21,7 +21,8 @@ const app = express();
 
 app.use(express.static('./Vistas'));
 
-app.use('/proveedores', express.static('./Vistas/surfac-proveedores'));
+app.use('/proveedores', express.static(__dirname + '/Vistas/surfac-proveedores/build'));
+app.use('/static', express.static(__dirname + '/Vistas/surfac-proveedores/build/static'));
 app.use('/Alarmas', express.static('./ControlAlarmas'));
 
 app.use(express.json());
@@ -31,7 +32,7 @@ app.use(bodyParser.json());
  * Rutas para redireccion de Páginas Estáticas.
  */
 app.get('/', (req, res) => res.sendFile('./Vistas/index.html'));
-app.get('/proveedores', (req, res) => res.sendFile(__dirname + '/Vistas/surfac-proveedores/index.html'));
+app.get('/proveedores', (req, res) => res.sendFile(__dirname + '/Vistas/surfac-proveedores/build/index.html'));
 
 /*
  * Rutas para la App de los Vendedores. 
