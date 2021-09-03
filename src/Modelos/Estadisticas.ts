@@ -5,7 +5,7 @@ const getAll = async (vendedor: string, anio: string) => {
 	try {
 		let WFiltroVendedor = vendedor == "99" ? "" : ` AND e.Vendedor = '${vendedor}'`;
 
-		const recordset = await new sql.Request()
+		const { recordset } = await new sql.Request()
 			.query(
 				`select count(Distinct e.Articulo) CantProductos, e.Cliente, LTRIM(RTRIM(c.Razon)) Razon, e.Vendedor, DesVendedor = CASE WHEN e.Vendedor = 1 THEN 'Directo' ELSE LTRIM(RTRIM(o.Descripcion)) END from Estadistica e LEFT OUTER JOIN Cliente c ON c.Cliente = e.Cliente LEFT OUTER JOIN Operador o ON o.Vendedor = c.Vendedor where e.OrdFecha between '${anio}0101' and '${anio}1231' ${WFiltroVendedor} GROUP BY e.Cliente, c.Razon, e.Vendedor, o.Descripcion`
 			);
@@ -37,7 +37,7 @@ const getAllProductos = async (vendedor: string | number, cliente: string, anio:
 	try {
 		let WFiltroVendedor = vendedor == 99 ? "" : ` AND e.Vendedor = '${vendedor}'`;
 
-		const recordset = await new sql.Request()
+		const { recordset } = await new sql.Request()
 			.query(
 				`select e.Numero, e.Renglon, Producto = CASE WHEN e.TipoProDy = 'M' THEN e.ArticuloDy ELSE e.Articulo END, e.Cantidad, e.Precio, e.PrecioUs, e.Cliente, LTRIM(RTRIM(c.Razon)) Razon, e.Paridad, e.Vendedor, DesVendedor = CASE WHEN e.Vendedor = 1 THEN 'Directo' ELSE LTRIM(RTRIM(o.Descripcion)) END , e.Fecha, DesTerminado = CASE e.TipoProDy WHEN 'M' then (SELECT RTRIM(Descripcion) FROM Articulo WHERE Codigo = e.ArticuloDy) WHEN 'T' THEN (SELECT RTRIM(Descripcion) FROM Terminado WHERE Codigo = e.Articulo) ELSE e.DescriTerminadoII END from Estadistica e LEFT OUTER JOIN Operador o ON e.Vendedor = o.Vendedor LEFT OUTER JOIN Cliente c ON e.Cliente = c.Cliente where e.OrdFecha >= '${anio}0101' and e.OrdFecha <= '${anio}1231' ${WFiltroVendedor} and e.Cliente = '${cliente}' order by e.Vendedor, e.Cliente, e.Numero, e.Renglon, Producto`
 			);
