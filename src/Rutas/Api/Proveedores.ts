@@ -1,13 +1,12 @@
-const express = require('express');
-const Proveedor = require('./../../Modelos/Proveedores');
+import * as express from 'express';
+import { traerSelectivoConfig, existeProveedor, registrarProveedor, yaRegistrado, AnotarSelectivo, Login } from './../../Modelos/Proveedores';
 const router = express.Router();
-const cors = require('cors');
 
-router.post('/CheckExistencia',(req, res) => {
+router.post('/CheckExistencia', (req, res) => {
 
-    const {Cuit} = req.body;
+    const { Cuit } = req.body;
 
-    Proveedor.existeProveedor(Cuit)
+    existeProveedor(Cuit)
         .then(resultados => res.json({
             error: false,
             resultados
@@ -20,7 +19,7 @@ router.post('/CheckExistencia',(req, res) => {
 
 router.post('/SelectivoConfig', (req, res) => {
 
-    Proveedor.traerSelectivoConfig()
+    traerSelectivoConfig()
         .then(resultados => res.json({
             error: false,
             resultados
@@ -31,11 +30,11 @@ router.post('/SelectivoConfig', (req, res) => {
         }));
 });
 
-router.post('/Login',(req, res) => {
+router.post('/Login', (req, res) => {
 
-    const {Cuit, Password} = req.body;
+    const { Cuit, Password } = req.body;
 
-    Proveedor.Login(Cuit, Password)
+    Login(Cuit, Password)
         .then(resultados => res.json({
             error: false,
             resultados
@@ -48,19 +47,19 @@ router.post('/Login',(req, res) => {
 
 router.post('/RegistrarNuevoProveedor', async (req, res) => {
     try {
-        const {Cuit, Password} = req.body;
-        const ExisteProveedor = await Proveedor.existeProveedor(Cuit);
+        const { Cuit, Password } = req.body;
+        const ExisteProveedor = await existeProveedor(Cuit);
 
-        if (!ExisteProveedor){
+        if (!ExisteProveedor) {
             res.json({
                 error: true,
-                errMsg: 'El Cuit indicado no se encuentra asociado a ningún Proveedor.'
+                errMsg: 'El Cuit indicado no se encuentra asociado a ningún '
             });
             return;
         }
 
-        const YaRegistrado = await Proveedor.yaRegistrado(Cuit);
-        if (YaRegistrado){
+        const YaRegistrado = await yaRegistrado(Cuit);
+        if (YaRegistrado) {
             res.json({
                 error: true,
                 errMsg: 'El Cuit indicado ya se encuentra Registrado en nuestro Sistema.'
@@ -68,7 +67,7 @@ router.post('/RegistrarNuevoProveedor', async (req, res) => {
             return;
         }
 
-        const regProv = await Proveedor.registrarProveedor(Cuit, Password);
+        const regProv = await registrarProveedor(Cuit, Password);
         res.json({
             error: false,
             resultados: regProv
@@ -81,19 +80,19 @@ router.post('/RegistrarNuevoProveedor', async (req, res) => {
     }
 });
 
-router.post('/AnotarProveedorSelectivo',(req, res) => {
-    const {IDProveedor} = req.body;
+router.post('/AnotarProveedorSelectivo', (req, res) => {
+    const { IDProveedor } = req.body;
 
-    Proveedor.traerSelectivoConfig()
+    traerSelectivoConfig()
         .then(resultados => {
-            if (!resultados){
+            if (!resultados) {
                 res.json({
                     error: true,
                     errMsg: 'No hay Fecha de Pagos habilitada. Pruebe en unos minutos nuevamente.'
-                })      
-            }else{
+                })
+            } else {
                 const IDSelectivo = resultados[0].ID;
-                Proveedor.AnotarSelectivo(IDSelectivo, IDProveedor).then(resultados => {
+                AnotarSelectivo(IDSelectivo, IDProveedor).then(resultados => {
                     res.json({
                         error: false,
                         resultados
