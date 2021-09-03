@@ -1,7 +1,7 @@
 import * as sql from "mssql";
-import * as _ from "lodash";
+import _ from "lodash";
 
-const getAll = async (vendedor) => {
+const getAll = async (vendedor: string) => {
 	try {
 
 		const { recordset } = await new sql.Request()
@@ -25,7 +25,7 @@ const getAll = async (vendedor) => {
 	}
 }
 
-const getAllCliente = async (cliente) => {
+const getAllCliente = async (cliente: string) => {
 	try {
 
 		const { recordset } = await new sql.Request()
