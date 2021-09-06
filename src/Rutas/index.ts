@@ -6,6 +6,7 @@ import * as Muestras from "./Api/Muestras";
 import * as Pedidos from "./Api/Pedidos";
 import * as Precios from "./Api/Precios";
 import * as Proveedor from './Api/Proveedores';
+import * as ColectoraHojaRuta from './Api/Colectora/HojaRuta';
 
 export {
     AniosFiltro,
@@ -16,4 +17,5 @@ export {
     Pedidos,
     Precios,
     Proveedor,
+    ColectoraHojaRuta,
 }

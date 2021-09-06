@@ -1,53 +1,45 @@
-const express = require('express');
-const HojaRuta = require('./../../../Modelos/Colectora/HojaRuta');
+import * as express from 'express';
+import { Buscar, BuscarEtiqueta } from './../../../Modelos/Colectora/HojaRuta';
 const router = express.Router();
 
 router.get('/:codigo', async (req, res) => {
 
     try {
-        const {codigo} = req.params;
-        const resultados = await HojaRuta.Buscar(codigo) ;
+        const { codigo } = req.params;
+        const resultados = await Buscar(codigo);
 
         res.json(
-            [ ...resultados ]
+            [...resultados]
         );
-
     } catch (err) {
-        
         res.json(
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: err
             }
         )
-
     }
-
 });
 
 router.get('/Etiqueta/:codigo', async (req, res) => {
 
     try {
-        const {codigo} = req.params;
-        const resultados = await HojaRuta.BuscarEtiqueta(codigo) ;
+        const { codigo } = req.params;
+        const resultados = await BuscarEtiqueta(codigo);
 
         res.json(
-            [ ...resultados ]
+            [...resultados]
         );
-
     } catch (err) {
-        
         res.json(
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: err
             }
         )
-
     }
-
 });
 
 module.exports = router;
