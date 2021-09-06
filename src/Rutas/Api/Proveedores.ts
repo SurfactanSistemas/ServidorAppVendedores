@@ -2,47 +2,55 @@ import * as express from 'express';
 import { traerSelectivoConfig, existeProveedor, registrarProveedor, yaRegistrado, AnotarSelectivo, Login } from './../../Modelos/Proveedores';
 const router = express.Router();
 
-router.post('/CheckExistencia', (req, res) => {
+router.post('/CheckExistencia', async (req, res) => {
+    try {
+        const { Cuit } = req.body;
 
-    const { Cuit } = req.body;
+        const resultados = await existeProveedor(Cuit);
 
-    existeProveedor(Cuit)
-        .then(resultados => res.json({
+        res.json({
             error: false,
             resultados
-        }))
-        .catch(err => res.json({
+        });
+    } catch (err) {
+        res.json({
             error: true,
             errMsg: err
-        }));
+        });
+    }
 });
 
-router.post('/SelectivoConfig', (req, res) => {
-
-    traerSelectivoConfig()
-        .then(resultados => res.json({
+router.post('/SelectivoConfig', async (_req, res) => {
+    try {
+        const resultados = await traerSelectivoConfig()
+        res.json({
             error: false,
             resultados
-        }))
-        .catch(err => res.json({
+        })
+    } catch (err) {
+        res.json({
             error: true,
             errMsg: err
-        }));
+        })
+    }
 });
 
-router.post('/Login', (req, res) => {
+router.post('/Login', async (req, res) => {
+    try {
+        const { Cuit, Password } = req.body;
 
-    const { Cuit, Password } = req.body;
+        const resultados = await Login(Cuit, Password)
 
-    Login(Cuit, Password)
-        .then(resultados => res.json({
+        res.json({
             error: false,
             resultados
-        }))
-        .catch(err => res.json({
+        })
+    } catch (err) {
+        res.json({
             error: true,
             errMsg: err
-        }));
+        })
+    }
 });
 
 router.post('/RegistrarNuevoProveedor', async (req, res) => {
@@ -80,33 +88,31 @@ router.post('/RegistrarNuevoProveedor', async (req, res) => {
     }
 });
 
-router.post('/AnotarProveedorSelectivo', (req, res) => {
-    const { IDProveedor } = req.body;
+router.post('/AnotarProveedorSelectivo', async (req, res) => {
+    try {
+        const { IDProveedor } = req.body;
 
-    traerSelectivoConfig()
-        .then(resultados => {
-            if (!resultados) {
-                res.json({
-                    error: true,
-                    errMsg: 'No hay Fecha de Pagos habilitada. Pruebe en unos minutos nuevamente.'
-                })
-            } else {
-                const IDSelectivo = resultados[0].ID;
-                AnotarSelectivo(IDSelectivo, IDProveedor).then(resultados => {
-                    res.json({
-                        error: false,
-                        resultados
-                    })
-                }).catch(err => res.json({
-                    error: true,
-                    errMsg: err
-                }));
-            }
-        })
-        .catch(err => res.json({
+        const resultados: any[] = await traerSelectivoConfig()
+
+        if (!resultados) {
+            res.json({
+                error: true,
+                errMsg: 'No hay Fecha de Pagos habilitada. Pruebe en unos minutos nuevamente.'
+            })
+        } else {
+            const IDSelectivo = resultados[0].ID;
+            const anotar = await AnotarSelectivo(IDSelectivo, IDProveedor)
+
+            res.json({
+                error: false,
+                resultados: anotar
+            })
+        }
+
+    } catch (err) {
+        res.json({
             error: true,
             errMsg: err
-        }));
+        })
+    }
 });
-
-module.exports = router;

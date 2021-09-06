@@ -5,6 +5,7 @@ import * as Login from "./Api/Login";
 import * as Muestras from "./Api/Muestras";
 import * as Pedidos from "./Api/Pedidos";
 import * as Precios from "./Api/Precios";
+import * as Proveedor from './Api/Proveedores';
 
 export {
     AniosFiltro,
@@ -14,4 +15,5 @@ export {
     Muestras,
     Pedidos,
     Precios,
+    Proveedor,
 }
