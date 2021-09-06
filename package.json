@@ -5,6 +5,10 @@
   "author": "Gaston Ferreyra",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "watch": "nodemon server.js"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
