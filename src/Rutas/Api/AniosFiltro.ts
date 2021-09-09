@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { getAll, getAllPedidos } from "../../Modelos/AniosFiltro";
+import {IError} from "../../Utils/Types";
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.get('/:idvendedor(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -52,8 +53,10 @@ router.get('/Pedidos/:idvendedor(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
 });
+
+export default router;

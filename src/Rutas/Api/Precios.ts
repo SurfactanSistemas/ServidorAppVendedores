@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { getAll, getAllCliente } from './../../Modelos/Precios';
+import {IError} from "../../Utils/Types";
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.get('/:vendedor/:anio', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -40,8 +41,10 @@ router.get('/:vendedor/:anio/:cliente', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
 });
+
+export default router;

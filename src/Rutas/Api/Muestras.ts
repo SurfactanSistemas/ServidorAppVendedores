@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { getAll, getAllWhere, getObservaciones, guardarObservacion } from './../../Modelos/Muestras';
+import { IError } from '../../Utils/Types';
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.get('/:vendedor/:anio', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -39,7 +40,7 @@ router.post('/Observaciones', async (req, res) => {
             {
                 error: true,
                 resultados: false,
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -60,7 +61,7 @@ router.get('/Observaciones/:pedido/:codProducto', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -83,8 +84,10 @@ router.get('/Where/:columnas/:condicion?', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
 });
+
+export default router;

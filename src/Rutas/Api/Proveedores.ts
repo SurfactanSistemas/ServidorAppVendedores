@@ -1,5 +1,7 @@
 import * as express from 'express';
 import { traerSelectivoConfig, existeProveedor, registrarProveedor, yaRegistrado, AnotarSelectivo, Login } from './../../Modelos/Proveedores';
+import { IError } from '../../Utils/Types';
+
 const router = express.Router();
 
 router.post('/CheckExistencia', async (req, res) => {
@@ -116,3 +118,5 @@ router.post('/AnotarProveedorSelectivo', async (req, res) => {
         })
     }
 });
+
+export default router;

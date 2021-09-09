@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { getAll, getDetalles, getPendienteDetalle, getPendientes } from './../../Modelos/Pedidos';
+import { IError } from '../../Utils/Types';
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.get('/Detalles/:hojaRuta(\\d+)/:pedido(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -49,7 +50,7 @@ router.get('/Pendientes/:vendedor(\\d+)/:soloAutorizado(\\d+)', async (req, res)
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -72,7 +73,7 @@ router.get('/Pendientes/Detalles/:pedido(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
@@ -96,8 +97,10 @@ router.get('/:vendedor(\\d+)/:fecha', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
 });
+
+export default router;

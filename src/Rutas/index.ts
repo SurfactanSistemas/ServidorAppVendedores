@@ -1,12 +1,12 @@
-import * as AniosFiltro from "./Api/AniosFiltro";
-import * as CtasCtes from "./Api/CtasCtes";
-import * as Estadisticas from "./Api/Estadisticas";
-import * as Login from "./Api/Login";
-import * as Muestras from "./Api/Muestras";
-import * as Pedidos from "./Api/Pedidos";
-import * as Precios from "./Api/Precios";
-import * as Proveedor from './Api/Proveedores';
-import * as ColectoraHojaRuta from './Api/Colectora/HojaRuta';
+import AniosFiltro from "./Api/AniosFiltro";
+import CtasCtes from "./Api/CtasCtes";
+import Estadisticas from "./Api/Estadisticas";
+import Login from "./Api/Login";
+import Muestras from "./Api/Muestras";
+import Pedidos from "./Api/Pedidos";
+import Precios from "./Api/Precios";
+import Proveedores from './Api/Proveedores';
+import ColectoraHojaRuta from './Api/Colectora/HojaRuta';
 
 export {
     AniosFiltro,
@@ -16,6 +16,6 @@ export {
     Muestras,
     Pedidos,
     Precios,
-    Proveedor,
+    Proveedores,
     ColectoraHojaRuta,
 }

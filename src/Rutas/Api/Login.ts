@@ -1,7 +1,7 @@
 import * as express from "express";
-// const express = require('express');
-// const Login = require('./../../Modelos/Login');
 import { logIn } from "../../Modelos/Login";
+import {IError} from "../../Utils/Types";
+
 const router = express.Router();
 
 router.get('/:clave', async (req, res) => {
@@ -16,8 +16,10 @@ router.get('/:clave', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err
+                ErrorMsg: (err as IError).originalError.info.message,
             }
         )
     }
 });
+
+export default router;
