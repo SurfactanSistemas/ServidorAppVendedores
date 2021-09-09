@@ -11,7 +11,7 @@ dotenv.config();
  * Importamos las rutas.
  */
 
-import { Login, Muestras, Estadisticas, Precios, CtasCtes, Pedidos, AniosFiltro, Proveedores, ColectoraHojaRuta } from "./Rutas"
+import { Login, Muestras, Estadisticas, Precios, CtasCtes, Pedidos, AniosFiltro, Proveedores, ColectoraHojaRuta, ClientesWeb } from "./Rutas"
 
 /**
  * Conectamos a la base de datos.
@@ -53,6 +53,7 @@ const init = async () => {
     app.use('/Api/AniosFiltro', AniosFiltro);
     app.use('/Api/Proveedores', cors(), Proveedores);
     app.use('/Api/Colectora/HojaRuta', cors(), ColectoraHojaRuta);
+    app.use('/Api/Clientes', cors(), ClientesWeb);
 
     const PORT = process.env.PORT;
 

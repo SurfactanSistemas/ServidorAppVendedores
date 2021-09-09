@@ -1,4 +1,6 @@
 import * as sql from "mssql";
+import { CustomError } from "../Utils/CustomError";
+import { IError } from "../Utils/Types";
 
 const logIn = async (clave: string): Promise<sql.IRecordSet<any>> => {
 	try {
@@ -9,7 +11,7 @@ const logIn = async (clave: string): Promise<sql.IRecordSet<any>> => {
 			);
 		return recordset;
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 

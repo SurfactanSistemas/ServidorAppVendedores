@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { traerSelectivoConfig, existeProveedor, registrarProveedor, yaRegistrado, AnotarSelectivo, Login } from './../../Modelos/Proveedores';
-import { IError } from '../../Utils/Types';
+import {CustomError} from "../../Utils/CustomError";
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post('/CheckExistencia', async (req, res) => {
     } catch (err) {
         res.json({
             error: true,
-            errMsg: err
+            errMsg: (err as CustomError).toString()
         });
     }
 });

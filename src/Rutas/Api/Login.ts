@@ -1,6 +1,6 @@
 import * as express from "express";
 import { logIn } from "../../Modelos/Login";
-import {IError} from "../../Utils/Types";
+import {CustomError} from "../../Utils/CustomError";
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.get('/:clave', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
     }

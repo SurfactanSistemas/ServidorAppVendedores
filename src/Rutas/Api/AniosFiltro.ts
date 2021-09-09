@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { getAll, getAllPedidos } from "../../Modelos/AniosFiltro";
-import {IError} from "../../Utils/Types";
+import {CustomError} from "../../Utils/CustomError";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.get('/:idvendedor(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
     }
@@ -53,7 +53,7 @@ router.get('/Pedidos/:idvendedor(\\d+)', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
     }

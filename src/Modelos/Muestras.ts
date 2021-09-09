@@ -1,4 +1,6 @@
 import * as sql from "mssql";
+import { CustomError } from "../Utils/CustomError";
+import { IError } from "../Utils/Types";
 
 const _ = require("lodash");
 
@@ -43,7 +45,7 @@ const getAll = async (vendedor: string | number, anio: string | number) => {
 		return _.sortBy(res, ["DesVendedor"]);
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 
@@ -57,7 +59,7 @@ const guardarObservacion = async (pedido: string | number, codProducto: string, 
 		return result.rowsAffected.length > 0;
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 
@@ -71,7 +73,7 @@ const getObservaciones = async (pedido: string | number, codProducto: string) =>
 		return recordset;
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 
@@ -89,7 +91,7 @@ const getAllWhere = async (columnas: string, condicion?: string) => {
 		return recordset;
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 

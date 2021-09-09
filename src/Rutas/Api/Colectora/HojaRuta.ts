@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Buscar, BuscarEtiqueta } from './../../../Modelos/Colectora/HojaRuta';
-import {IError} from "../../../Utils/Types";
+import {CustomError} from "../../../Utils/CustomError";
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.get('/:codigo', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
     }
@@ -38,7 +38,7 @@ router.get('/Etiqueta/:codigo', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
     }

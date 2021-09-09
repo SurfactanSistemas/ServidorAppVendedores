@@ -1,5 +1,7 @@
 import * as sql from "mssql";
 import _ from "lodash";
+import { CustomError } from "../Utils/CustomError";
+import { IError } from "../Utils/Types";
 
 const getAll = async (vendedor: string | number) => {
 	try {
@@ -22,7 +24,7 @@ const getAll = async (vendedor: string | number) => {
 		return _.sortBy(res, ["DesVendedor"]);
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 
@@ -44,7 +46,7 @@ const getAllCliente = async (vendedor: string | number, cliente: string) => {
 		return _.sortBy(res, ["DesVendedor"]);
 
 	} catch (error) {
-		throw error;
+		throw new CustomError((error as IError).originalError.info.message);
 	}
 }
 

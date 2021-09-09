@@ -7,6 +7,7 @@ import Pedidos from "./Api/Pedidos";
 import Precios from "./Api/Precios";
 import Proveedores from './Api/Proveedores';
 import ColectoraHojaRuta from './Api/Colectora/HojaRuta';
+import ClientesWeb from './Api/Clientes';
 
 export {
     AniosFiltro,
@@ -18,4 +19,5 @@ export {
     Precios,
     Proveedores,
     ColectoraHojaRuta,
+    ClientesWeb,
 }

@@ -1,4 +1,6 @@
 import * as sql from 'mssql';
+import { CustomError } from '../../Utils/CustomError';
+import { IError } from '../../Utils/Types';
 
 const Buscar = async (codigo:string) => {
     try {
@@ -13,7 +15,7 @@ const Buscar = async (codigo:string) => {
         return recordset;
 
     } catch (error) {
-        throw error;
+        throw new CustomError((error as IError).originalError.info.message);
     }
 }
 
@@ -28,7 +30,7 @@ const BuscarEtiqueta = async (codigo:string) => {
         return recordset;
 
     } catch (error) {
-        throw error;
+        throw new CustomError((error as IError).originalError.info.message);
     }
 }
 

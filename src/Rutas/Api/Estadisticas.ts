@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { getAll, getAllProductos } from './../../Modelos/Estadisticas';
-import {IError} from "../../Utils/Types";
+import {CustomError} from "../../Utils/CustomError";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.get('/:vendedor/:anio?', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
 
@@ -52,7 +52,7 @@ router.get('/Productos/:vendedor/:cliente/:anio', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: (err as IError).originalError.info.message,
+                ErrorMsg: (err as CustomError).toString()
             }
         )
 
