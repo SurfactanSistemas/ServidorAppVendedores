@@ -3,6 +3,9 @@ import * as sql from "mssql";
 import * as bodyParser from "body-parser";
 import cors from "cors";
 import { ConfigDb } from "./Config/ConfigDb";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 /**
  * Importamos las rutas.
@@ -51,7 +54,7 @@ const init = async () => {
     app.use('/Api/Proveedores', cors(), Proveedores);
     app.use('/Api/Colectora/HojaRuta', cors(), ColectoraHojaRuta);
 
-    const PORT = 5500;
+    const PORT = process.env.PORT;
 
     app.listen(PORT, () => console.log(`Servidor corriendo en ${PORT}`));
 
