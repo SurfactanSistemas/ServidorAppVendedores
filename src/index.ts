@@ -1,4 +1,4 @@
-import { Express } from "express";
+import express from "express";
 import * as sql from "mssql";
 import * as bodyParser from "body-parser";
 import * as cors from "cors";
@@ -16,10 +16,13 @@ import { Login } from "./Rutas"
  */
 
 const init = async () => {
-    // Descomentar despuest.
-    // await sql.connect(ConfigDb);
+    // Abrimos la conexión con la BD.
+    await sql.connect(ConfigDb);
 
+    // Inicializamos express para manejar el enrutamiento.
+    const app = express();
 
+    app.use(express.static('./Vistas'))
 
 }
 
