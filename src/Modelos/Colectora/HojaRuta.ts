@@ -1,6 +1,6 @@
 import * as sql from 'mssql';
 
-const Buscar = async (codigo) => {
+const Buscar = async (codigo:string) => {
     try {
 
         console.log(codigo)
@@ -17,7 +17,7 @@ const Buscar = async (codigo) => {
     }
 }
 
-const BuscarEtiqueta = async (codigo) => {
+const BuscarEtiqueta = async (codigo:string) => {
     try {
 
         console.log(codigo)

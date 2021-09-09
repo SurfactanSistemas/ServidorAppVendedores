@@ -60,7 +60,7 @@ router.get('/Observaciones/:pedido/:codProducto', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: err
             }
         )
     }
@@ -69,6 +69,7 @@ router.get('/Observaciones/:pedido/:codProducto', async (req, res) => {
 router.get('/Where/:columnas/:condicion?', async (req, res) => {
 
     try {
+
         const { columnas, condicion } = req.params;
 
         const resultados = await getAllWhere(columnas, condicion)
@@ -82,7 +83,7 @@ router.get('/Where/:columnas/:condicion?', async (req, res) => {
             {
                 error: true,
                 resultados: [],
-                ErrorMsg: err.message
+                ErrorMsg: err
             }
         )
     }

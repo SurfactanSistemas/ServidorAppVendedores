@@ -1,7 +1,7 @@
 import * as sql from "mssql";
 import _ from "lodash";
 
-const existeProveedor = async (Cuit) => {
+const existeProveedor = async (Cuit:string) => {
 	try {
 		const req = await new sql.Request().query(`SELECT Proveedor FROM Proveedor WHERE Cuit = '${Cuit}'`);
 		return req.recordset.length > 0;
@@ -10,7 +10,7 @@ const existeProveedor = async (Cuit) => {
 	}
 }
 
-const yaRegistrado = async (Cuit) => {
+const yaRegistrado = async (Cuit:string) => {
 	try {
 		const req = await new sql.Request().query(`SELECT ID FROM ProveedorWeb WHERE Cuit = '${Cuit}'`);
 		return req.recordset.length > 0;
@@ -19,7 +19,7 @@ const yaRegistrado = async (Cuit) => {
 	}
 }
 
-const registrarProveedor = async (Cuit, Password) => {
+const registrarProveedor = async (Cuit:string, Password:string) => {
 	try {
 		const WDate = new Date();
 		const ZDate = `${WDate.getFullYear()}-${(WDate.getMonth() + 1)
@@ -37,7 +37,7 @@ const registrarProveedor = async (Cuit, Password) => {
 	}
 }
 
-const Login = async (Cuit, Password) => {
+const Login = async (Cuit:string, Password:string) => {
 	try {
 		const { recordset } = await new sql.Request()
 			.query(
@@ -65,7 +65,7 @@ const traerSelectivoConfig = async () => {
 	}
 }
 
-const AnotarSelectivo = async (IDSelectivo, IDProveedor) => {
+const AnotarSelectivo = async (IDSelectivo:string, IDProveedor:string) => {
 	try {
 		const WDate = new Date();
 		const ZDate = `${WDate.getFullYear()}-${(WDate.getMonth() + 1)

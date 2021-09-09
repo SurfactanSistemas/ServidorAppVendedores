@@ -75,7 +75,7 @@ const getObservaciones = async (pedido: string | number, codProducto: string) =>
 	}
 }
 
-const getAllWhere = async (columnas: string, condicion: string) => {
+const getAllWhere = async (columnas: string, condicion?: string) => {
 	try {
 
 		if (!columnas) columnas = "*";
