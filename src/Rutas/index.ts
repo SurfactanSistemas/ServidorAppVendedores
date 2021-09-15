@@ -12,6 +12,7 @@ import ClientesWeb from './Api/Clientes';
 =======
 import * as AniosFiltro from "./Api/AniosFiltro";
 import * as CtasCtes from "./Api/CtasCtes";
+import * as Estadisticas from "./Api/Estadisticas";
 import * as Login from "./Api/Login";
 >>>>>>> 8979b82 (Js to TS refactoring - Rutas CtasCtes)
 
@@ -19,9 +20,13 @@ export {
     AniosFiltro,
     CtasCtes,
 <<<<<<< HEAD
+<<<<<<< HEAD
     Estadisticas,
 =======
 >>>>>>> 8979b82 (Js to TS refactoring - Rutas CtasCtes)
+=======
+    Estadisticas,
+>>>>>>> 2ecc41d (Js to TS refactoring - Rutas Estadisticas)
     Login,
     Muestras,
     Pedidos,

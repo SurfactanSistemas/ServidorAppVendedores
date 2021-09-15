@@ -1,5 +1,6 @@
 import * as sql from "mssql";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import _ from "lodash";
 import { ProcessError } from "../Utils/Helpers";
 
@@ -9,6 +10,11 @@ import * as _ from "lodash";
 
 const getAll = async (vendedor) => {
 >>>>>>> 8979b82 (Js to TS refactoring - Rutas CtasCtes)
+=======
+import _ from "lodash";
+
+const getAll = async (vendedor: string) => {
+>>>>>>> 2ecc41d (Js to TS refactoring - Rutas Estadisticas)
 	try {
 
 		const { recordset } = await new sql.Request()
@@ -39,8 +45,12 @@ const getAllCliente = async (cliente: string) => {
 	}
 }
 
+<<<<<<< HEAD
 const getAllCliente = async (cliente) => {
 >>>>>>> 8979b82 (Js to TS refactoring - Rutas CtasCtes)
+=======
+const getAllCliente = async (cliente: string) => {
+>>>>>>> 2ecc41d (Js to TS refactoring - Rutas Estadisticas)
 	try {
 
 		const { recordset } = await new sql.Request()
