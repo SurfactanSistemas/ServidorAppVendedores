@@ -1,7 +1,6 @@
 import * as sql from "mssql";
 import _ from "lodash";
-import { CustomError } from "../Utils/CustomError";
-import { IError } from "../Utils/Types";
+import { ProcessError } from "../Utils/Helpers";
 
 const getAll = async (vendedor: string | number, fecha: string) => {
 	try {
@@ -44,7 +43,7 @@ const getAll = async (vendedor: string | number, fecha: string) => {
 		return res;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -80,7 +79,7 @@ const getDetalles = async (hojaRuta: string | number, pedido: string | number) =
 		return res;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -123,7 +122,7 @@ const getPendientes = async (vendedor: string | number, soloAutorizado: string |
 		return res;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 const getPendienteDetalle = async (pedido: string | number) => {
@@ -157,7 +156,7 @@ const getPendienteDetalle = async (pedido: string | number) => {
 		return res;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 

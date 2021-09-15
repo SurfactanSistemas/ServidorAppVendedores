@@ -1,14 +1,13 @@
 import * as sql from "mssql";
 import _ from "lodash";
-import { CustomError } from "../Utils/CustomError";
-import { IError } from "../Utils/Types";
+import { ProcessError } from "../Utils/Helpers";
 
 const existeProveedor = async (Cuit:string) => {
 	try {
 		const req = await new sql.Request().query(`SELECT Proveedor FROM Proveedor WHERE Cuit = '${Cuit}'`);
 		return req.recordset.length > 0;
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -17,7 +16,7 @@ const yaRegistrado = async (Cuit:string) => {
 		const req = await new sql.Request().query(`SELECT ID FROM ProveedorWeb WHERE Cuit = '${Cuit}'`);
 		return req.recordset.length > 0;
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -35,7 +34,7 @@ const registrarProveedor = async (Cuit:string, Password:string) => {
 		return result.rowsAffected.length > 0;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -49,7 +48,7 @@ const Login = async (Cuit:string, Password:string) => {
 		return recordset;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -63,7 +62,7 @@ const traerSelectivoConfig = async () => {
 		return recordset;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -79,7 +78,7 @@ const AnotarSelectivo = async (IDSelectivo:string, IDProveedor:string) => {
 		return result.rowsAffected.length > 0;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 

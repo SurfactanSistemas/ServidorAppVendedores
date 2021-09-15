@@ -1,7 +1,6 @@
 import * as sql from "mssql";
 import _ from "lodash";
-import { CustomError } from "../Utils/CustomError";
-import { IError } from "../Utils/Types";
+import { ProcessError } from "../Utils/Helpers";
 
 const getAll = async (vendedor: string) => {
 	try {
@@ -23,7 +22,7 @@ const getAll = async (vendedor: string) => {
 		return _.sortBy(res, ["DesVendedor"]);
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 
@@ -47,7 +46,7 @@ const getAllCliente = async (cliente: string) => {
 		return _.sortBy(res, ["DesVendedor"]);
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 

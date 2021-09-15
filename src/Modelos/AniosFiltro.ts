@@ -1,6 +1,5 @@
 import * as sql from "mssql";
-import { CustomError } from "../Utils/CustomError";
-import { IError } from "../Utils/Types";
+import { ProcessError } from "../Utils/Helpers";
 
 const getAll = async (idvendedor: string): Promise<sql.IRecordSet<any>> => {
 	try {
@@ -13,7 +12,7 @@ const getAll = async (idvendedor: string): Promise<sql.IRecordSet<any>> => {
 		return recordset;
 
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 const getAllPedidos = async (idvendedor: string): Promise<sql.IRecordSet<any>> => {
@@ -26,7 +25,7 @@ const getAllPedidos = async (idvendedor: string): Promise<sql.IRecordSet<any>> =
 			);
 		return recordset;
 	} catch (error) {
-		throw new CustomError((error as IError).originalError.info.message);
+		throw ProcessError(error);
 	}
 }
 

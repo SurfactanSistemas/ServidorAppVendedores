@@ -1,6 +1,5 @@
 import * as sql from 'mssql';
-import { CustomError } from '../../Utils/CustomError';
-import { IError } from '../../Utils/Types';
+import { ProcessError } from "../../Utils/Helpers";
 
 const Buscar = async (codigo:string) => {
     try {
@@ -15,7 +14,7 @@ const Buscar = async (codigo:string) => {
         return recordset;
 
     } catch (error) {
-        throw new CustomError((error as IError).originalError.info.message);
+        throw ProcessError(error);
     }
 }
 
@@ -30,7 +29,7 @@ const BuscarEtiqueta = async (codigo:string) => {
         return recordset;
 
     } catch (error) {
-        throw new CustomError((error as IError).originalError.info.message);
+        throw ProcessError(error);
     }
 }
 

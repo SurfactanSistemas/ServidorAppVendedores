@@ -1,14 +1,11 @@
-export class CustomError implements Error {
-    name: string;
-    message: string;
-    stack?: string;
-    
+export class CustomError extends Error {
     constructor(msg:string) {
+        super(msg);
         this.name = "CustomError"
         this.message = msg;
     }
 
     toString(){
-        return this.message;
+        return this.message
     }
 }
