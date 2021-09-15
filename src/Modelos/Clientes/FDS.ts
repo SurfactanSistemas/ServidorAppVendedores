@@ -14,7 +14,9 @@ let _FDSs:string[] = [];
 const getAll = async (cuil:string):Promise<FDS[]> => {
 	try {
 
-        _FDSs = fs.readdirSync("//193.168.0.2/w/impresion pdf/FDS/");
+        const _PATH_FDS = process.env["FDS_PATH"] || "";
+        
+        _FDSs = fs.readdirSync(_PATH_FDS);
 
         const FDSs:FDS[] = [];
         
