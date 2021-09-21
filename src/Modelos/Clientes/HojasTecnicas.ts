@@ -33,7 +33,7 @@ const getAll = async (cuil:string):Promise<HojaTecnica[]> => {
             HojasTecnicas.push({
                 producto: p["Terminado"],
                 descripcion: (p["DescTerminado"] as string).trim(),
-                archivo: generateFileName(p["Terminado"], p["DescTerminado"])
+                archivo: generateFileName(p["Terminado"])
             } as HojaTecnica)
         });
 
@@ -51,13 +51,12 @@ const getAll = async (cuil:string):Promise<HojaTecnica[]> => {
 	}
 }
 
-const generateFileName = (codigo:string, origDesc:string):string => {
+const generateFileName = (codigo:string):string => {
     let fileName = '';
 
-    codigo = codigo.trim();
-    origDesc = origDesc.trim().replace(/[^A-z0-9]/gi, "").replace(/\s+/gi, "");
+    codigo = codigo.trim().replace(/\-+/gi, "");
 
-    const searchFile = `DOC${codigo.substr(0,3)}${codigo.substr(5, 7)}${origDesc}`;
+    const searchFile = `DOC${codigo.substr(2,8)}`;
     fileName = _HojasTecnicas.find(f => f.includes(searchFile)) || "";
 
     return fileName;
