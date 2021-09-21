@@ -15,7 +15,7 @@ const getAll = async (cuil:string):Promise<FDS[]> => {
 	try {
 
         const _PATH_FDS = process.env["FDS_PATH"] || "";
-        
+
         _FDSs = fs.readdirSync(_PATH_FDS);
 
         const FDSs:FDS[] = [];
