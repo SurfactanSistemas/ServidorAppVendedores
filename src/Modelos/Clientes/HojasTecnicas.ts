@@ -35,7 +35,9 @@ const getAll = async (cuil: string): Promise<HojaTecnica[]> => {
 
 		const _HojasValidas = HojasTecnicas.filter((_Hoja) => _Hoja.archivo.toLowerCase().endsWith(".pdf"));
 
-		return _.sortBy(_HojasValidas, (_Hoja) => _Hoja.descripcion);
+		const resp = _.sortBy(_HojasValidas, (_Hoja) => _Hoja.descripcion);
+
+		return _.uniqBy(resp, "producto");
 	} catch (error) {
 		throw ProcessError(error);
 	}
