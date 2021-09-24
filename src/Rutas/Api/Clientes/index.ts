@@ -1,111 +1,124 @@
 import * as express from "express";
-import {Login, Registrado} from "../../../Modelos/Clientes/Login";
-import {Register} from "../../../Modelos/Clientes/Register";
+import { Login, Registrado } from "../../../Modelos/Clientes/Login";
+import { Register } from "../../../Modelos/Clientes/Register";
 import * as FDS from "../../../Modelos/Clientes/FDS";
+import * as ChangePassword from "../../../Modelos/Clientes/ChangePassword";
 import * as HojasTecnicas from "../../../Modelos/Clientes/HojasTecnicas";
 
-import {CustomError} from "../../../Utils/CustomError";
+import { CustomError } from "../../../Utils/CustomError";
 
 const router = express.Router();
 
-router.get('/Registrado/:cuil', async (req, res) => {
-    try {
+router.get("/Registrado/:cuil", async (req, res) => {
+	try {
+		const { cuil } = req.params;
 
-        const { cuil } = req.params;
+		const resultados = await Registrado(cuil);
 
-        const resultados = await Registrado(cuil);
-
-        res.json({ error: false, resultados, errorMsg: '' });
-
-    } catch (err) {
-        res.json(
-            {
-                error: true,
-                resultados: [],
-                ErrorMsg: (err as CustomError).toString(),
-            }
-        )
-    }
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
 });
 
-router.get('/Registro/:cuil/:clave', async (req, res) => {
-    try {
+router.get("/CambiarClave/:cuil/:claveAnterior/:clave", async (req, res) => {
+	try {
+		const { cuil, claveAnterior, clave } = req.params;
 
-        const { cuil, clave } = req.params;
+		const resultados = await ChangePassword.CambiarClave(cuil, claveAnterior, clave);
 
-        const resultados = await Register(cuil, clave);
-
-        res.json({ error: false, resultados, errorMsg: '' });
-
-    } catch (err) {
-        res.json(
-            {
-                error: true,
-                resultados: [],
-                ErrorMsg: (err as CustomError).toString(),
-            }
-        )
-    }
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
 });
 
-router.get('/FDS/:cuil', async (req, res) => {
-    try {
+router.get("/Registro/:cuil/:clave", async (req, res) => {
+	try {
+		const { cuil, clave } = req.params;
 
-        const { cuil } = req.params;
+		const resultados = await Register(cuil, clave);
 
-        const resultados = await FDS.getAll(cuil);
-
-        res.json({ error: false, resultados, errorMsg: '' });
-
-    } catch (err) {
-        res.json(
-            {
-                error: true,
-                resultados: [],
-                ErrorMsg: (err as CustomError).toString(),
-            }
-        )
-    }
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
 });
 
-router.get('/HojasTecnicas/:cuil', async (req, res) => {
-    try {
+router.get("/FDS/:cuil", async (req, res) => {
+	try {
+		const { cuil } = req.params;
 
-        const { cuil } = req.params;
+		const resultados = await FDS.getAll(cuil);
 
-        const resultados = await HojasTecnicas.getAll(cuil);
-
-        res.json({ error: false, resultados, errorMsg: '' });
-
-    } catch (err) {
-        res.json(
-            {
-                error: true,
-                resultados: [],
-                ErrorMsg: (err as CustomError).toString(),
-            }
-        )
-    }
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
 });
 
-router.get('/:cuil/:clave', async (req, res) => {
-    try {
+router.get("/HojasTecnicas/:cuil", async (req, res) => {
+	try {
+		const { cuil } = req.params;
 
-        const { cuil, clave } = req.params;
+		const resultados = await HojasTecnicas.getAll(cuil);
 
-        const resultados = await Login(cuil, clave);
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
 
-        res.json({ error: false, resultados, errorMsg: '' });
+router.get("/HojasTecnicas/:cuil", async (req, res) => {
+	try {
+		const { cuil } = req.params;
 
-    } catch (err) {
-        res.json(
-            {
-                error: true,
-                resultados: [],
-                ErrorMsg: (err as CustomError).toString(),
-            }
-        )
-    }
+		const resultados = await HojasTecnicas.getAll(cuil);
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
+router.get("/:cuil/:clave", async (req, res) => {
+	try {
+		const { cuil, clave } = req.params;
+
+		const resultados = await Login(cuil, clave);
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
 });
 
 export default router;
