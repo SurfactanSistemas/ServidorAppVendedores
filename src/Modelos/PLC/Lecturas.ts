@@ -29,8 +29,13 @@ const PLCClient = async () => {
  * Genero el string que se va a mostrar en la UI.
  */
 const generarFechaComoString = (resto: number, diasCompletos: number) => {
-	const hours = Math.floor(resto / 3600);
-	const minutes = Math.ceil((resto / 3600 - hours) * 60);
+	let hours = Math.floor(resto / 3600);
+	let minutes = Math.ceil((resto / 3600 - hours) * 60);
+
+	if (minutes == 60) {
+		hours += 1;
+		minutes = 0;
+	}
 
 	const _hours = hours.toString().padStart(2, "0");
 	const _minutes = minutes.toString().padStart(2, "0");
