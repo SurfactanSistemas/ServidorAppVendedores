@@ -34,7 +34,9 @@ const generarFechaComoString = (resto: number, diasCompletos: number) => {
 
 	const _hours = hours.toString().padStart(2, "0");
 	const _minutes = minutes.toString().padStart(2, "0");
-	const _days = diasCompletos.toString().padStart(2, "0");
+	const _days = Math.floor(diasCompletos / 86400)
+		.toString()
+		.padStart(2, "0");
 
 	if (diasCompletos > 0) {
 		return `${_days} días con ${_hours} hs ${minutes} min`;
