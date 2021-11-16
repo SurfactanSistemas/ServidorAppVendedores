@@ -24,6 +24,7 @@ import {
 	ClientesWeb,
 	PLC,
 } from "./Rutas";
+import path from "path";
 
 /**
  * Conectamos a la base de datos.
@@ -36,7 +37,9 @@ const init = async () => {
 	// Inicializamos express para manejar el enrutamiento.
 	const app = express();
 
-	app.use(express.static("./Vistas"));
+	app.use(express.static(__dirname + "/../Vistas/PLC/Monitor"));
+	app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor"));
+	app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor"));
 
 	app.use("/Alarmas", express.static("./ControlAlarmas"));
 
@@ -46,7 +49,7 @@ const init = async () => {
 	/*
 	 * Rutas para redireccion de Páginas Estáticas.
 	 */
-	app.get("/", (_req, res) => res.sendFile(__dirname + "/Vistas/index.html"));
+	app.get("/", (_req, res) => res.sendFile(path.resolve(__dirname + "/../Vistas/PLC/Monitor/index.html")));
 
 	/*
 	 * Rutas para la App de los Vendedores.
