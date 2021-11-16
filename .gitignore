@@ -2,3 +2,4 @@ Config/ConfigDb.js
 node_modules
 dist
 .vscode/
+.env
