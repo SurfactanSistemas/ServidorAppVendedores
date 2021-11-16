@@ -11,54 +11,66 @@ dotenv.config();
  * Importamos las rutas.
  */
 
-import { Login, Muestras, Estadisticas, Precios, CtasCtes, Pedidos, AniosFiltro, Proveedores, ColectoraHojaRuta, ClientesWeb } from "./Rutas"
+import {
+	Login,
+	Muestras,
+	Estadisticas,
+	Precios,
+	CtasCtes,
+	Pedidos,
+	AniosFiltro,
+	Proveedores,
+	ColectoraHojaRuta,
+	ClientesWeb,
+	PLC,
+} from "./Rutas";
 
 /**
  * Conectamos a la base de datos.
  */
 
 const init = async () => {
-    // Abrimos la conexión con la BD.
-    await sql.connect(ConfigDb);
+	// Abrimos la conexión con la BD.
+	await sql.connect(ConfigDb);
 
-    // Inicializamos express para manejar el enrutamiento.
-    const app = express();
+	// Inicializamos express para manejar el enrutamiento.
+	const app = express();
 
-    app.use(express.static('./Vistas'));
-    
-    app.use('/Alarmas', express.static('./ControlAlarmas'));
+	app.use(express.static("./Vistas"));
 
-    app.use(express.json());
-    app.use(bodyParser.json());
-    
-    /*
-    * Rutas para redireccion de Páginas Estáticas.
-    */
-    app.get('/', (_req, res) => res.sendFile(__dirname + '/Vistas/index.html'));
+	app.use("/Alarmas", express.static("./ControlAlarmas"));
 
-    /*
-    * Rutas para la App de los Vendedores. 
-    */
-    app.use('/Api/Muestras', Muestras);
+	app.use(express.json());
+	app.use(bodyParser.json());
 
-    app.use('/Api/Estadisticas', Estadisticas);
+	/*
+	 * Rutas para redireccion de Páginas Estáticas.
+	 */
+	app.get("/", (_req, res) => res.sendFile(__dirname + "/Vistas/index.html"));
 
-    app.use('/Api/Precios', Precios);
-    app.use('/Api/CtasCtes', CtasCtes);
+	/*
+	 * Rutas para la App de los Vendedores.
+	 */
+	app.use("/Api/Muestras", Muestras);
 
-    app.use('/Api/Pedidos', Pedidos);
+	app.use("/Api/Estadisticas", Estadisticas);
 
-    app.use('/Api/Login', Login);
+	app.use("/Api/Precios", Precios);
+	app.use("/Api/CtasCtes", CtasCtes);
 
-    app.use('/Api/AniosFiltro', AniosFiltro);
-    app.use('/Api/Proveedores', cors(), Proveedores);
-    app.use('/Api/Colectora/HojaRuta', cors(), ColectoraHojaRuta);
-    app.use('/Api/Clientes', cors(), ClientesWeb);
+	app.use("/Api/Pedidos", Pedidos);
 
-    const PORT = process.env.PORT;
+	app.use("/Api/Login", Login);
 
-    app.listen(PORT, () => console.log(`Servidor corriendo en ${PORT}`));
+	app.use("/Api/AniosFiltro", AniosFiltro);
+	app.use("/Api/Proveedores", cors(), Proveedores);
+	app.use("/Api/Colectora/HojaRuta", cors(), ColectoraHojaRuta);
+	app.use("/Api/Clientes", cors(), ClientesWeb);
+	app.use("/Api/PLC", cors(), PLC);
 
-}
+	const PORT = process.env.PORT;
+
+	app.listen(PORT, () => console.log(`Servidor corriendo en ${PORT}`));
+};
 
 init();
