@@ -44,7 +44,7 @@ const generarFechaComoString = (resto: number, diasCompletos: number) => {
 		.padStart(2, "0");
 
 	if (diasCompletos > 0) {
-		return `${_days} días con ${_hours} hs ${minutes} min`;
+		return `${_days} días ${_hours} hs ${minutes} min`;
 	} else {
 		return `${_hours} hs ${_minutes} min`;
 	}
