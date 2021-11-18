@@ -33,6 +33,20 @@ router.get("/datos/realTime/resumen/actual", async (req, res) => {
 	}
 });
 
+router.get("/datos/realTime/resumen/historial/:partida", async (req, res) => {
+	try {
+		const resultados = await Resumen.Actual();
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
 router.get("/datos/realTime/direcciones", async (req, res) => {
 	try {
 		const resultados = Graficables.AddressRealTime();
