@@ -47,7 +47,7 @@ router.get("/datos/realTime/resumen/historial/partidas", async (req, res) => {
 	}
 });
 
-router.get("/datos/realTime/resumen/historial/:partida", async (req, res) => {
+router.get("/datos/realTime/resumen/historial/por_partida/:partida", async (req, res) => {
 	try {
 		const { partida } = req.params;
 
