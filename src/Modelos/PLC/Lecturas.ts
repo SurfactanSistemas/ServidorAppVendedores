@@ -676,6 +676,28 @@ const Graficables = {
 			throw ProcessError(error);
 		}
 	},
+	PorPartida: async (address: string, partida: number | string) => {
+		try {
+			const { recordset } = await new sql.Request().query(
+				`SELECT * FROM PLCDatos WHERE Address = '${address}' AND Partida = '${partida}' ORDER BY ID`
+			);
+
+			return recordset;
+		} catch (error) {
+			throw ProcessError(error);
+		}
+	},
+	PartidasSeleccionables: async () => {
+		try {
+			const { recordset } = await new sql.Request().query(
+				`SELECT DISTINCT plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo ORDER BY plc.Partida DESC`
+			);
+
+			return recordset;
+		} catch (error) {
+			throw ProcessError(error);
+		}
+	},
 };
 
 export { Graficables, Resumen };

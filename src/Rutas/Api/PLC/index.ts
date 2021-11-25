@@ -33,9 +33,25 @@ router.get("/datos/realTime/resumen/actual", async (req, res) => {
 	}
 });
 
+router.get("/datos/realTime/resumen/historial/partidas", async (req, res) => {
+	try {
+		const resultados = await Graficables.PartidasSeleccionables();
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
 router.get("/datos/realTime/resumen/historial/:partida", async (req, res) => {
 	try {
-		const resultados = await Resumen.Actual();
+		const { partida } = req.params;
+
+		const resultados = await Resumen.Historial(partida);
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -78,6 +94,22 @@ router.get("/datos/realTime/producto", async (req, res) => {
 router.get("/datos/realTime/eventos_fijos", async (req, res) => {
 	try {
 		const resultados = await Graficables.EstadosEventosFijos();
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
+router.get("/datos/graficables/por_partida/:address/:partida", async (req, res) => {
+	try {
+		const { address, partida } = req.params;
+
+		const resultados = await Graficables.PorPartida(address, partida);
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
