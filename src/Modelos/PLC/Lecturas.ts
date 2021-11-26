@@ -689,8 +689,11 @@ const Graficables = {
 	},
 	PartidasSeleccionables: async () => {
 		try {
+			const Prod = Graficables.ProductoActual();
 			const { recordset } = await new sql.Request().query(
-				`SELECT DISTINCT plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo ORDER BY plc.Partida DESC`
+				`SELECT DISTINCT plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo WHERE plc.Partida <> '${
+					(await Prod).Partida || ""
+				}' ORDER BY plc.Partida DESC`
 			);
 
 			return recordset;
