@@ -41,7 +41,7 @@ const init = async () => {
 	app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
 	app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
 	app.use("/admin/historial", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
-	app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/buildstatic"));
+	app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
 
 	app.use("/Alarmas", express.static("./ControlAlarmas"));
 
