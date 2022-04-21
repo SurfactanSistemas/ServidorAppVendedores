@@ -37,11 +37,11 @@ const init = async () => {
 	// Inicializamos express para manejar el enrutamiento.
 	const app = express();
 
-	app.use(express.static(__dirname + "/../Vistas/PLC/Monitor/build/static"));
-	app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor/build/static"));
-	app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor/build/static"));
-	app.use("/admin/historial", express.static(__dirname + "/../Vistas/PLC/Monitor/build/static"));
-	app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/build/static"));
+	app.use(express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+	app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+	app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+	app.use("/admin/historial", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+	app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/buildstatic"));
 
 	app.use("/Alarmas", express.static("./ControlAlarmas"));
 
