@@ -1,7 +1,7 @@
 import * as express from "express";
 import { CustomError } from "../../../Utils/CustomError";
 import { Graficables, Resumen } from "../../../Modelos/PLC/Lecturas";
-import { addresses } from "../../../Modelos/PLC/addresses";
+import ping from "ping";
 
 const router = express.Router();
 
@@ -149,6 +149,24 @@ router.get("/datos/realTime/:address", async (req, res) => {
 			error: true,
 			resultados: [],
 			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
+router.get("/status", async (req, res) => {
+	try {
+		const SECADORA_IP_LOCAL = "193.168.0.21";
+
+		const { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
+			timeout: 1,
+		});
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (error) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: error,
 		});
 	}
 });
