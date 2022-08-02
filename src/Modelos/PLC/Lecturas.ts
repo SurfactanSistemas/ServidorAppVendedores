@@ -1,11 +1,10 @@
+import dotenv from "dotenv";
+import _ from "lodash";
 import ModbusRTU from "modbus-serial";
+import moment from "moment";
 import * as sql from "mssql";
 import { ProcessError } from "../../Utils/Helpers";
 import { addresses } from "./addresses";
-import dotenv from "dotenv";
-import _ from "lodash";
-import moment from "moment";
-import { parse } from "path/posix";
 
 dotenv.config();
 
@@ -702,7 +701,7 @@ const Graficables = {
 			const { recordset } = await new sql.Request().query(
 				`SELECT DISTINCT plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo WHERE plc.Partida <> '${
 					Prod.Partida || ""
-				}' ORDER BY plc.Partida DESC`
+				}' ORDER BY plc.ID DESC`
 			);
 
 			return recordset;
