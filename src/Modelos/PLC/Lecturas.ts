@@ -701,7 +701,7 @@ const Graficables = {
 			const { recordset } = await new sql.Request().query(
 				`SELECT h.Hoja as Partida, t.Descripcion FROM (SELECT Partida, min(StartTime) As Inicio FROM PlcDatos GROUP BY Partida) plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Renglon = 1 AND h.Hoja = plc.Partida INNER JOIN Terminado t ON t.Codigo = h.Producto WHERE plc.Partida <> '${
 					Prod.Partida || ""
-				}' ORDER BY plc.Inicio`
+				}' ORDER BY plc.Inicio DESC`
 			);
 
 			return recordset;
