@@ -699,7 +699,7 @@ const Graficables = {
 
 		try {
 			const { recordset } = await new sql.Request().query(
-				`SELECT DISTINCT plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo WHERE plc.Partida <> '${
+				`SELECT DISTINCT plc.ID, plc.Partida, t.Descripcion FROM PLCDatos plc INNER JOIN Surfactan_III.dbo.Hoja h ON h.Hoja = plc.Partida INNER JOIN Terminado t ON h.Producto = t.Codigo WHERE plc.Partida <> '${
 					Prod.Partida || ""
 				}' ORDER BY plc.ID DESC`
 			);
