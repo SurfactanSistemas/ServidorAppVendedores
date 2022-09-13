@@ -168,7 +168,7 @@ router.get("/status/:id", async (req, res) => {
 
 		if (!_equipo) throw new Error(`Equipo no definido para ID ${id}`);
 
-		const SECADORA_IP_LOCAL = _equipo.id.toString();
+		const SECADORA_IP_LOCAL = _equipo.ip;
 
 		const { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
 			timeout: 1,
