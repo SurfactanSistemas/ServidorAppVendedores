@@ -5,15 +5,20 @@ import moment from "moment";
 import * as sql from "mssql";
 import { ProcessError } from "../../Utils/Helpers";
 import { addresses } from "./addresses";
+import { EQUIPOS } from "./_equipos";
 
 dotenv.config();
 
-const PLCClient = async () => {
+const PLCClient = async (_id: number) => {
+	const _equipo = EQUIPOS.find((eq) => eq.id == _id);
+
+	if (!_equipo) throw new Error(`Equipo no definido para id ${_id}`);
+
 	const client = new ModbusRTU();
 
-	const IP = process.env["PLC_IP"] || "127.0.0.1";
-	const PORT: number = (process.env["PLC_PORT"] || 502) as number;
-	const ID_DEVICE = (process.env["PLC_ID_DEVICE"] || 0) as number;
+	const IP = _equipo.ip;
+	const PORT: number = _equipo.port;
+	const ID_DEVICE = _equipo.id;
 
 	await client.connectTCP(IP, { port: PORT });
 
@@ -76,11 +81,11 @@ const datosEventosFijos = _.orderBy(
 );
 
 const Resumen = {
-	Actual: async () => {
+	Actual: async (_id: number) => {
 		/**
 		 * Obtenemos el Producto Actual con sus datos.
 		 */
-		const Producto = await Graficables.ProductoActual();
+		const Producto = await Graficables.ProductoActual(_id);
 
 		/**
 		 * Obtengo todos los datos que tenga guardados hasta el momento para esta Partida.
@@ -484,7 +489,7 @@ const Resumen = {
 	EventosPorPartida: async (partida: string) => {
 		try {
 			const { recordset } = await new sql.Request().query(
-				`SELECT Address, StartTime, Value, Descripcion FROM PLCDatos WHERE Partida = '${partida}' and Address IN (${datosEventosFijos
+				`SELECT Address, StartTime, Value, Descripcion, Dispositivo_ID FROM PLCDatos WHERE Partida = '${partida}' and Address IN (${datosEventosFijos
 					.map((e) => e.id)
 					.join(",")}) ORDER BY Address, StartTime`
 			);
@@ -498,9 +503,9 @@ const Resumen = {
 
 const Graficables = {
 	AddressRealTime: () => datosAMostrar,
-	EstadosEventosFijos: async () => {
+	EstadosEventosFijos: async (_id: number) => {
 		try {
-			const client = await PLCClient();
+			const client = await PLCClient(_id);
 
 			const resp: Address[] = [];
 
@@ -523,8 +528,8 @@ const Graficables = {
 			throw ProcessError(error);
 		}
 	},
-	ProductoActual: async () => {
-		const client = await PLCClient();
+	ProductoActual: async (_id: number) => {
+		const client = await PLCClient(_id);
 
 		const addrPartidaI = 1712;
 		const addrPartidaII = 1727;
@@ -584,9 +589,9 @@ const Graficables = {
 			KilosProducto,
 		};
 	},
-	GetValoresActuales: async (): Promise<Address[]> => {
+	GetValoresActuales: async (_id: number): Promise<Address[]> => {
 		try {
-			const client = await PLCClient();
+			const client = await PLCClient(_id);
 
 			const resp: Address[] = [];
 
@@ -634,9 +639,9 @@ const Graficables = {
 			throw ProcessError(error);
 		}
 	},
-	GetValorActual: async (address: string): Promise<Address> => {
+	GetValorActual: async (address: string, _id: number): Promise<Address> => {
 		try {
-			const client = await PLCClient();
+			const client = await PLCClient(_id);
 
 			const _addr = addresses.find((a) => a.id === parseInt(address));
 
@@ -657,10 +662,16 @@ const Graficables = {
 			throw ProcessError(error);
 		}
 	},
-	PorPeriodo: async (address: string, start: number | string, end: number | string, partida: number | string) => {
+	PorPeriodo: async (
+		address: string,
+		start: number | string,
+		end: number | string,
+		partida: number | string,
+		_id: number
+	) => {
 		try {
 			if (partida == "0") {
-				const _prod = await Graficables.ProductoActual();
+				const _prod = await Graficables.ProductoActual(_id);
 				partida = _prod.Partida;
 			}
 
@@ -686,11 +697,11 @@ const Graficables = {
 			throw ProcessError(error);
 		}
 	},
-	PartidasSeleccionables: async () => {
+	PartidasSeleccionables: async (_id: number) => {
 		let Prod;
 
 		try {
-			Prod = await Graficables.ProductoActual();
+			Prod = await Graficables.ProductoActual(_id);
 		} catch (error) {
 			Prod = {
 				Partida: 0,

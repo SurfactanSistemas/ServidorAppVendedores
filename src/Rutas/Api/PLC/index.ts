@@ -1,13 +1,15 @@
 import * as express from "express";
-import { CustomError } from "../../../Utils/CustomError";
-import { Graficables, Resumen } from "../../../Modelos/PLC/Lecturas";
 import ping from "ping";
+import { Graficables, Resumen } from "../../../Modelos/PLC/Lecturas";
+import { EQUIPOS } from "../../../Modelos/PLC/_equipos";
+import { CustomError } from "../../../Utils/CustomError";
 
 const router = express.Router();
 
-router.get("/datos/realTime", async (req, res) => {
+router.get("/datos/realTime/:id", async (req, res) => {
 	try {
-		const resultados = await Graficables.GetValoresActuales();
+		const { id } = req.params;
+		const resultados = await Graficables.GetValoresActuales(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -19,9 +21,10 @@ router.get("/datos/realTime", async (req, res) => {
 	}
 });
 
-router.get("/datos/realTime/resumen/actual", async (req, res) => {
+router.get("/datos/realTime/resumen/actual/:id", async (req, res) => {
 	try {
-		const resultados = await Resumen.Actual();
+		const { id } = req.params;
+		const resultados = await Resumen.Actual(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -33,9 +36,10 @@ router.get("/datos/realTime/resumen/actual", async (req, res) => {
 	}
 });
 
-router.get("/datos/realTime/resumen/historial/partidas", async (req, res) => {
+router.get("/datos/realTime/resumen/historial/partidas/:id", async (req, res) => {
 	try {
-		const resultados = await Graficables.PartidasSeleccionables();
+		const { id } = req.params;
+		const resultados = await Graficables.PartidasSeleccionables(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -77,9 +81,10 @@ router.get("/datos/realTime/direcciones", async (req, res) => {
 	}
 });
 
-router.get("/datos/realTime/producto", async (req, res) => {
+router.get("/datos/realTime/producto/:id", async (req, res) => {
 	try {
-		const resultados = await Graficables.ProductoActual();
+		const { id } = req.params;
+		const resultados = await Graficables.ProductoActual(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -91,9 +96,10 @@ router.get("/datos/realTime/producto", async (req, res) => {
 	}
 });
 
-router.get("/datos/realTime/eventos_fijos", async (req, res) => {
+router.get("/datos/realTime/eventos_fijos/:id", async (req, res) => {
 	try {
-		const resultados = await Graficables.EstadosEventosFijos();
+		const { id } = req.params;
+		const resultados = await Graficables.EstadosEventosFijos(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -121,11 +127,11 @@ router.get("/datos/graficables/por_partida/:address/:partida", async (req, res) 
 	}
 });
 
-router.get("/datos/graficables/:address/:start/:end/:partida", async (req, res) => {
+router.get("/datos/graficables/:address/:start/:end/:partida/:id", async (req, res) => {
 	try {
-		const { address, start, end, partida } = req.params;
+		const { address, start, end, partida, id } = req.params;
 
-		const resultados = await Graficables.PorPeriodo(address, start, end, partida);
+		const resultados = await Graficables.PorPeriodo(address, start, end, partida, parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -137,11 +143,11 @@ router.get("/datos/graficables/:address/:start/:end/:partida", async (req, res) 
 	}
 });
 
-router.get("/datos/realTime/:address", async (req, res) => {
+router.get("/datos/realTime/:address/:id", async (req, res) => {
 	try {
-		const { address } = req.params;
+		const { address, id } = req.params;
 
-		const resultados = await Graficables.GetValorActual(address);
+		const resultados = await Graficables.GetValorActual(address, parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -153,9 +159,14 @@ router.get("/datos/realTime/:address", async (req, res) => {
 	}
 });
 
-router.get("/status", async (req, res) => {
+router.get("/status/:id", async (req, res) => {
 	try {
-		const SECADORA_IP_LOCAL = "193.168.0.21";
+		const { id } = req.params;
+		const _equipo = EQUIPOS.find((eq) => eq.id == parseInt(id));
+
+		if (!_equipo) throw new Error(`Equipo no definido para ID ${id}`);
+
+		const SECADORA_IP_LOCAL = _equipo.id.toString();
 
 		const { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
 			timeout: 1,
