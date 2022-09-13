@@ -164,6 +164,8 @@ router.get("/status/:id", async (req, res) => {
 		const { id } = req.params;
 		const _equipo = EQUIPOS.find((eq) => eq.id == parseInt(id));
 
+		console.log("ID", id, "Equipo", _equipo);
+
 		if (!_equipo) throw new Error(`Equipo no definido para ID ${id}`);
 
 		const SECADORA_IP_LOCAL = _equipo.id.toString();
