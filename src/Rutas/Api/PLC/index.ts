@@ -6,10 +6,9 @@ import { CustomError } from "../../../Utils/CustomError";
 
 const router = express.Router();
 
-router.get("/datos/realTime/:id", async (req, res) => {
+router.get("/datos/realTime/direcciones", async (req, res) => {
 	try {
-		const { id } = req.params;
-		const resultados = await Graficables.GetValoresActuales(parseInt(id));
+		const resultados = Graficables.AddressRealTime();
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -56,20 +55,6 @@ router.get("/datos/realTime/resumen/historial/por_partida/:partida", async (req,
 		const { partida } = req.params;
 
 		const resultados = await Resumen.Historial(partida);
-
-		res.json({ error: false, resultados, errorMsg: "" });
-	} catch (err) {
-		res.json({
-			error: true,
-			resultados: [],
-			ErrorMsg: (err as CustomError).toString(),
-		});
-	}
-});
-
-router.get("/datos/realTime/direcciones", async (req, res) => {
-	try {
-		const resultados = Graficables.AddressRealTime();
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -132,6 +117,21 @@ router.get("/datos/graficables/:address/:start/:end/:partida/:id", async (req, r
 		const { address, start, end, partida, id } = req.params;
 
 		const resultados = await Graficables.PorPeriodo(address, start, end, partida, parseInt(id));
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: (err as CustomError).toString(),
+		});
+	}
+});
+
+router.get("/datos/realTime/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const resultados = await Graficables.GetValoresActuales(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
