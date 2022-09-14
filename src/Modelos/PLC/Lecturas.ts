@@ -9,7 +9,7 @@ import { EQUIPOS } from "./_equipos";
 
 dotenv.config();
 
-const PLCClient = async (_id: number) => {
+export const PLCClient = async (_id: number) => {
 	const _equipo = EQUIPOS.find((eq) => eq.id == _id);
 
 	if (!_equipo) throw new Error(`Equipo no definido para id ${_id}`);
@@ -674,10 +674,15 @@ const Graficables = {
 		try {
 			if (partida == "0") {
 				const _prod = await Graficables.ProductoActual(_id);
+				console.log(_prod);
 				partida = _prod.Partida;
 			}
 
 			let partidaFiltro = partida != "0" ? ` AND Partida = '${partida}'` : "";
+
+			console.log(
+				`SELECT * FROM PLCDatos WHERE Address = '${address}' ${partidaFiltro} AND StartTime >= '${start}' AND EndTime <= '${end}' ORDER BY ID`
+			);
 
 			const { recordset } = await new sql.Request().query(
 				`SELECT * FROM PLCDatos WHERE Address = '${address}' ${partidaFiltro} AND StartTime >= '${start}' AND EndTime <= '${end}' ORDER BY ID`

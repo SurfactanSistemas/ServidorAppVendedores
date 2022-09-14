@@ -1,6 +1,6 @@
 import * as express from "express";
 import ping from "ping";
-import { Graficables, Resumen } from "../../../Modelos/PLC/Lecturas";
+import { Graficables, PLCClient, Resumen } from "../../../Modelos/PLC/Lecturas";
 import { EQUIPOS } from "../../../Modelos/PLC/_equipos";
 import { CustomError } from "../../../Utils/CustomError";
 
@@ -116,6 +116,8 @@ router.get("/datos/graficables/:address/:start/:end/:partida/:id", async (req, r
 	try {
 		const { address, start, end, partida, id } = req.params;
 
+		console.log(address, start, end, partida, id);
+
 		const resultados = await Graficables.PorPeriodo(address, start, end, partida, parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
@@ -170,9 +172,30 @@ router.get("/status/:id", async (req, res) => {
 
 		const SECADORA_IP_LOCAL = _equipo.ip;
 
-		const { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
+		let { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
 			timeout: 1,
 		});
+
+		if (resultados) {
+			const client = await PLCClient(parseInt(id));
+
+			const addrPartidaI = 1712;
+			const addrPartidaII = 1727;
+
+			const {
+				data: [_partidaI],
+			} = await client.readHoldingRegisters(addrPartidaI, 1);
+
+			const {
+				data: [_partidaII],
+			} = await client.readHoldingRegisters(addrPartidaII, 1);
+
+			let Partida: number = parseInt(
+				`${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`
+			);
+
+			if (Partida < 300000 || Partida > 399999) resultados = false;
+		}
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (error) {
