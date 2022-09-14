@@ -554,9 +554,9 @@ const Graficables = {
 			`SELECT TOP 1 h.Producto, t.Descripcion, h.Teorico FROM Surfactan_III.dbo.Hoja h INNER JOIN Surfactan_III.dbo.Terminado t ON t.Codigo = h.Producto WHERE h.Hoja = '${Partida}'`
 		);
 
-		CodProducto = prod["Producto"];
-		DescProducto = prod["Descripcion"];
-		KilosProducto = prod["Teorico"];
+		CodProducto = prod?.Producto;
+		DescProducto = prod?.Descripcion;
+		KilosProducto = prod?.Teorico;
 
 		client.close(() => {});
 
