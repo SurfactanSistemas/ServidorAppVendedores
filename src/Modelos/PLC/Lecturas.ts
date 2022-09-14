@@ -104,19 +104,21 @@ const Resumen = {
 		const LecturasHorasNetasTrabajadas = Datos.filter((d) => d.Address === 581 && d.Encendido);
 
 		/**
-		 * Con las horas trabajadas, encuentro el Horario de arranque.
-		 * El cual sería el momento con valor mas chico, ya que se encuentra en el pasado.
-		 */
-		const ComienzoTrabajo =
-			LecturasHorasNetasTrabajadas.length > 0 ? _.min(LecturasHorasNetasTrabajadas.map((d) => d.StartTime)) : 0;
-
-		/**
 		 * Suponiendo periodos de apagado cuando la bomba no se encuentra funcionando,
 		 * encuentro el rango de horas en las que no estuvo trabajando.
 		 *
 		 * {581} es la dirección en memoria del PLC.
 		 */
 		const LecturasHorasNetasApagado = Datos.filter((d) => d.Address === 581 && !d.Encendido);
+
+		/**
+		 * Con las horas trabajadas, encuentro el Horario de arranque.
+		 * El cual sería el momento con valor mas chico, ya que se encuentra en el pasado.
+		 */
+		const ComienzoTrabajo =
+			LecturasHorasNetasTrabajadas.length > 0
+				? _.min(LecturasHorasNetasTrabajadas.map((d) => d.StartTime))
+				: _.min(LecturasHorasNetasApagado.map((d) => d.StartTime));
 
 		/**
 		 * Puedo saber si en algun momento detuvieron el equipo.
