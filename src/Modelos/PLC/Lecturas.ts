@@ -505,6 +505,65 @@ const Resumen = {
 
 const Graficables = {
 	AddressRealTime: () => datosAMostrar,
+	RealTimeAll: async (_id: number) => {
+		try {
+			const client = await PLCClient(_id);
+
+			const eventos: Address[] = [];
+
+			for await (const addr of datosEventosFijos) {
+				const {
+					data: [_val],
+				} = await client.readHoldingRegisters(addr.id, 1);
+
+				eventos.push({
+					id: addr.id,
+					descripcion: addr.descripcion.trim().toUpperCase(),
+					value: _val.toString(),
+				});
+			}
+
+			const addrPartidaI = 1712;
+			const addrPartidaII = 1727;
+
+			const {
+				data: [_partidaI],
+			} = await client.readHoldingRegisters(addrPartidaI, 1);
+
+			const {
+				data: [_partidaII],
+			} = await client.readHoldingRegisters(addrPartidaII, 1);
+
+			let CodProducto = "";
+			let DescProducto = "";
+			let KilosProducto = 0.0;
+
+			let Partida = `${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`;
+
+			const {
+				recordset: [prod],
+			} = await new sql.Request().query(
+				`SELECT TOP 1 h.Producto, t.Descripcion, h.Teorico FROM Surfactan_III.dbo.Hoja h INNER JOIN Surfactan_III.dbo.Terminado t ON t.Codigo = h.Producto WHERE h.Hoja = '${Partida}'`
+			);
+
+			CodProducto = prod?.Producto;
+			DescProducto = prod?.Descripcion;
+			KilosProducto = prod?.Teorico;
+
+			const producto = {
+				Partida,
+				CodProducto,
+				DescProducto,
+				KilosProducto,
+			};
+
+			client.close(() => {});
+
+			return { producto, eventos };
+		} catch (error) {
+			throw ProcessError(error);
+		}
+	},
 	EstadosEventosFijos: async (_id: number) => {
 		try {
 			const client = await PLCClient(_id);

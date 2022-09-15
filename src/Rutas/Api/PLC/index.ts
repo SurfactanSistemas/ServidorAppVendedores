@@ -66,6 +66,21 @@ router.get("/datos/realTime/resumen/historial/por_partida/:partida", async (req,
 	}
 });
 
+router.get("/datos/realTime/all/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const resultados = await Graficables.RealTimeAll(parseInt(id));
+
+		res.json({ error: false, resultados, errorMsg: "" });
+	} catch (err) {
+		res.json({
+			error: true,
+			resultados: [],
+			ErrorMsg: JSON.stringify(err as CustomError),
+		});
+	}
+});
+
 router.get("/datos/realTime/producto/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
