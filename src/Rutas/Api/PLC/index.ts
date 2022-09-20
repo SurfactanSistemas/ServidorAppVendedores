@@ -1,6 +1,7 @@
 import * as express from "express";
 import ping from "ping";
-import { Graficables, PLCClient, Resumen } from "../../../Modelos/PLC/Lecturas";
+import { Graficables, Resumen } from "../../../Modelos/PLC/Lecturas";
+import { getDatos } from "../../../Modelos/PLC/MongoQuery";
 import { EQUIPOS } from "../../../Modelos/PLC/_equipos";
 import { CustomError } from "../../../Utils/CustomError";
 
@@ -187,36 +188,40 @@ router.get("/status/:id", async (req, res) => {
 
 		const SECADORA_IP_LOCAL = _equipo.ip;
 
-		let { alive: resultados } = await ping.promise.probe(SECADORA_IP_LOCAL, {
+		let { alive: resultados, times } = await ping.promise.probe(SECADORA_IP_LOCAL, {
 			timeout: 1,
+			extra: ["-n", "4"],
 		});
 
 		if (resultados) {
-			const client = await PLCClient(parseInt(id));
+			const query = {
+				id: {
+					$in: [1712, 1727],
+				},
+				id_device: {
+					$eq: _equipo.id,
+				},
+			};
 
-			const addrPartidaI = 1712;
-			const addrPartidaII = 1727;
+			const data = await getDatos("Data", query, { sort: { startTime: -1, id: 1 }, limit: 2 });
 
-			const {
-				data: [_partidaI],
-			} = await client.readHoldingRegisters(addrPartidaI, 1);
+			if (data.length > 1) {
+				const _partidaI = data[0].value;
+				const _partidaII = data[1].value;
 
-			const {
-				data: [_partidaII],
-			} = await client.readHoldingRegisters(addrPartidaII, 1);
+				let Partida: number = parseInt(
+					`${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`
+				);
 
-			let Partida: number = parseInt(
-				`${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`
-			);
-
-			if (Partida < 300000 || Partida > 399999) resultados = false;
+				if (Partida < 300000 || Partida > 399999) resultados = false;
+			}
 		}
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (error) {
 		res.json({
 			error: true,
-			resultados: [],
+			resultados: false,
 			ErrorMsg: error,
 		});
 	}

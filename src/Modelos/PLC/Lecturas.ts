@@ -5,6 +5,7 @@ import moment from "moment";
 import * as sql from "mssql";
 import { ProcessError } from "../../Utils/Helpers";
 import { addresses } from "./addresses";
+import { getDatos } from "./MongoQuery";
 import { EQUIPOS } from "./_equipos";
 
 dotenv.config();
@@ -507,38 +508,87 @@ const Graficables = {
 	AddressRealTime: () => datosAMostrar,
 	RealTimeAll: async (_id: number) => {
 		try {
-			const client = await PLCClient(_id);
+			// La última lectura del address que se le pasa a la consulta.
+			const options = { sort: { startTime: -1 }, limit: 1 };
+
+			const query = {
+				id: {
+					$eq: 0,
+				},
+				id_device: {
+					$eq: _id,
+				},
+			};
+
+			const _datosPrep = datosEventosFijos.map((e) =>
+				getDatos("Eventos", { ...query, ...{ id: { $eq: e.id } } }, options)
+			);
+
+			// const datos = await getDatos("Eventos", { ...query }, options);
+			const _datos = await Promise.all(_datosPrep);
+			const datos = _datos.map((d) => d[0]).filter((d) => d !== undefined);
 
 			const eventos: Address[] = [];
 
+			// console.log(datos);
+
 			for await (const addr of datosEventosFijos) {
-				const {
-					data: [_val],
-				} = await client.readHoldingRegisters(addr.id, 1);
+				const dato = datos.find((d) => d.id == addr.id);
+
+				// console.log(dato);
+
+				if (dato == undefined) continue;
+
+				const { value: _val } = dato;
 
 				eventos.push({
 					id: addr.id,
 					descripcion: addr.descripcion.trim().toUpperCase(),
-					value: _val.toString(),
+					value: _val.trim(),
 				});
 			}
+
+			// const client = await PLCClient(_id);
+
+			// for await (const addr of datosEventosFijos) {
+			// 	const {
+			// 		data: [_val],
+			// 	} = await client.readHoldingRegisters(addr.id, 1);
+
+			// 	eventos.push({
+			// 		id: addr.id,
+			// 		descripcion: addr.descripcion.trim().toUpperCase(),
+			// 		value: _val.toString(),
+			// 	});
+			// }
 
 			const addrPartidaI = 1712;
 			const addrPartidaII = 1727;
 
-			const {
-				data: [_partidaI],
-			} = await client.readHoldingRegisters(addrPartidaI, 1);
+			const datosII = await getDatos(
+				"Data",
+				{ ...query, ...{ id: { $in: [addrPartidaI, addrPartidaII] } } },
+				options
+			);
 
-			const {
-				data: [_partidaII],
-			} = await client.readHoldingRegisters(addrPartidaII, 1);
+			if (!datosII) throw new Error("Partida no determinada");
+
+			const { value: _partidaI } = datosII.find((d) => d.id == addrPartidaI) ?? { value: "0" };
+			const { value: _partidaII } = datosII.find((d) => d.id == addrPartidaII) ?? { value: "0" };
+
+			// const {
+			// 	data: [_partidaI],
+			// } = await client.readHoldingRegisters(addrPartidaI, 1);
+
+			// const {
+			// 	data: [_partidaII],
+			// } = await client.readHoldingRegisters(addrPartidaII, 1);
 
 			let CodProducto = "";
 			let DescProducto = "";
 			let KilosProducto = 0.0;
 
-			let Partida = `${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`;
+			let Partida = `${_partidaI.padEnd(3, "0")}${_partidaII.padStart(3, "0")}`;
 
 			const {
 				recordset: [prod],
@@ -557,32 +607,48 @@ const Graficables = {
 				KilosProducto,
 			};
 
-			client.close(() => {});
-
 			return { producto, eventos };
 		} catch (error) {
+			console.log(error);
 			throw ProcessError(error);
 		}
 	},
 	EstadosEventosFijos: async (_id: number) => {
 		try {
-			const client = await PLCClient(_id);
+			// La última lectura del address que se le pasa a la consulta.
+			const options = { sort: { startTime: -1 }, limit: 1 };
+
+			const query = {
+				id: {
+					$eq: 0,
+				},
+				id_device: {
+					$eq: _id,
+				},
+			};
+
+			const _datosPrep = datosEventosFijos.map((e) =>
+				getDatos("Eventos", { ...query, ...{ id: { $eq: e.id } } }, options)
+			);
+
+			const _datos = await Promise.all(_datosPrep);
+			const datos = _datos.map((d) => d[0]).filter((d) => d !== undefined);
 
 			const resp: Address[] = [];
 
 			for await (const addr of datosEventosFijos) {
-				const {
-					data: [_val],
-				} = await client.readHoldingRegisters(addr.id, 1);
+				const dato = datos.find((d) => d.id == addr.id);
+
+				if (dato == undefined) continue;
+
+				const { value: _val } = dato;
 
 				resp.push({
 					id: addr.id,
 					descripcion: addr.descripcion.trim().toUpperCase(),
-					value: _val.toString(),
+					value: _val.trim(),
 				});
 			}
-
-			client.close(() => {});
 
 			return resp;
 		} catch (error) {
@@ -590,24 +656,36 @@ const Graficables = {
 		}
 	},
 	ProductoActual: async (_id: number) => {
-		const client = await PLCClient(_id);
+		const options = { sort: { startTime: -1 }, limit: 1 };
+
+		const query = {
+			id: {
+				$in: [],
+			},
+			id_device: {
+				$eq: _id,
+			},
+		};
 
 		const addrPartidaI = 1712;
 		const addrPartidaII = 1727;
 
-		const {
-			data: [_partidaI],
-		} = await client.readHoldingRegisters(addrPartidaI, 1);
+		const datosII = await getDatos(
+			"Data",
+			{ ...query, ...{ id: { $in: [addrPartidaI, addrPartidaII] } } },
+			options
+		);
 
-		const {
-			data: [_partidaII],
-		} = await client.readHoldingRegisters(addrPartidaII, 1);
+		if (!datosII) throw new Error("Partida no determinada");
 
-		let CodProducto = ``;
-		let DescProducto = ``;
+		const { value: _partidaI } = datosII.find((d) => d.id == addrPartidaI) ?? { value: "0" };
+		const { value: _partidaII } = datosII.find((d) => d.id == addrPartidaII) ?? { value: "0" };
+
+		let CodProducto = "";
+		let DescProducto = "";
 		let KilosProducto = 0.0;
 
-		let Partida = `${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`;
+		let Partida = `${_partidaI.padEnd(3, "0")}${_partidaII.padStart(3, "0")}`;
 
 		const {
 			recordset: [prod],
@@ -618,8 +696,6 @@ const Graficables = {
 		CodProducto = prod?.Producto;
 		DescProducto = prod?.Descripcion;
 		KilosProducto = prod?.Teorico;
-
-		client.close(() => {});
 
 		return {
 			Partida,
@@ -652,37 +728,51 @@ const Graficables = {
 	},
 	GetValoresActuales: async (_id: number): Promise<Address[]> => {
 		try {
-			const client = await PLCClient(_id);
+			// La última lectura del address que se le pasa a la consulta.
+			const options = { sort: { startTime: -1 }, limit: datosAMostrar.length };
+			const query = {
+				id: {
+					$in: [...datosAMostrar.map((a) => a.id)],
+				},
+				id_device: {
+					$eq: _id,
+				},
+			};
+
+			const datos = await getDatos("Data", { ...query }, options);
+
+			// console.log(datos);
 
 			const resp: Address[] = [];
 
 			for await (const addr of datosAMostrar) {
-				const {
-					data: [_val],
-				} = await client.readHoldingRegisters(addr.id, 1);
+				const data = datos.find((d) => d.id == addr.id);
 
-				let _valSeteo = 0;
+				if (data == undefined) continue;
+
+				let _val = data.value.trim();
+				let _valSeteo = "0";
 
 				switch (addr.id) {
 					case 569:
-						({
-							data: [_valSeteo],
-						} = await client.readHoldingRegisters(568, 1));
+						({ value: _valSeteo } = datos.find((d) => d.id == 568) ?? { value: "0" });
 						break;
 					case 580:
-						({
-							data: [_valSeteo],
-						} = await client.readHoldingRegisters(579, 1));
+						({ value: _valSeteo } = datos.find((d) => d.id == 579) ?? { value: "0" });
 						break;
 					default:
 						break;
 				}
 
-				let val = _val.toString().trim();
-				let valSeteo = _valSeteo.toString();
+				let val = _val;
+				let valSeteo = _valSeteo;
 
-				if (addr.precision > 0) val = (_val / Math.pow(10, addr.precision)).toFixed(addr.precision);
-				if (addr.precision > 0) valSeteo = (_valSeteo / Math.pow(10, addr.precision)).toFixed(addr.precision);
+				if (addr.precision > 0) {
+					val = (parseFloat(_val) / Math.pow(10, addr.precision)).toFixed(addr.precision);
+					valSeteo = (parseFloat(_valSeteo) / Math.pow(10, addr.precision)).toFixed(addr.precision);
+				}
+
+				// console.log(val, _val, valSeteo, _valSeteo);
 
 				resp.push({
 					id: addr.id,
@@ -692,8 +782,6 @@ const Graficables = {
 					seteo: valSeteo,
 				} as Address);
 			}
-
-			client.close(() => {});
 
 			return resp;
 		} catch (error) {
