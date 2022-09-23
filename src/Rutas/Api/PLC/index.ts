@@ -219,6 +219,7 @@ router.get("/status/:id", async (req, res) => {
 					`${_partidaI.toString().padEnd(3, "0")}${_partidaII.toString().padStart(3, "0")}`
 				);
 
+				console.log("Partida", Partida);
 				if (Partida < 300000 || Partida > 399999) resultados = false;
 			}
 		}
