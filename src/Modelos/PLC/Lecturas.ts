@@ -4,7 +4,7 @@ import ModbusRTU from "modbus-serial";
 import moment from "moment";
 import * as sql from "mssql";
 import { ProcessError } from "../../Utils/Helpers";
-import { addresses } from "./addresses";
+import { addresses, addressesRedirected } from "./addresses";
 import { getDatos } from "./MongoQuery";
 import { EQUIPOS } from "./_equipos";
 
@@ -71,10 +71,71 @@ export interface Values {
 	data: Data[];
 }
 
-const datosAMostrar = _.orderBy(
-	addresses.filter((a) => a.realTime && ![568, 579, 1518, 1523].includes(a.id)),
-	["grupo"]
-);
+interface IAddressRedirected {
+	[key: number]: { from: number; to: number; remove: boolean }[];
+}
+
+interface IAddress {
+	id: number;
+	descripcion: string;
+	value: string;
+	listable: boolean;
+	esEvento: boolean;
+	unidad: string;
+	precision: number;
+	realTime: boolean;
+	grupo: number;
+}
+
+interface ITemp {
+	[key: number]: {
+		addr: IAddress;
+		addr_index: number;
+	};
+}
+
+const prepareAddresses = (_id_device: number) => {
+	console.log(typeof addresses, addresses.length);
+	let _addresses = addresses.map((a) => {
+		return { ...a };
+	});
+	const _redirecciones: IAddressRedirected = addressesRedirected;
+	if (_redirecciones[_id_device]) {
+		const temp: ITemp = {};
+
+		_redirecciones[_id_device].forEach((_red) => {
+			const index = _addresses.findIndex((e) => e.id == _red.from);
+			if (index > -1) {
+				temp[_red.to] = {
+					addr: _addresses[index],
+					addr_index: index,
+				};
+			}
+		});
+
+		for (const key in temp) {
+			const _red = temp[key];
+			const _temp = _red.addr;
+			_temp.id = parseInt(key);
+			_addresses[_red.addr_index] = _temp;
+		}
+	}
+
+	return _addresses;
+};
+
+const datosAMostrar = (_id: number) => {
+	let add_ = 568;
+
+	if ((addressesRedirected as IAddressRedirected)[_id]) {
+		const _add = (addressesRedirected as IAddressRedirected)[_id].find((e) => e.from == 568);
+		if (_add) add_ = _add.to;
+	}
+	return _.orderBy(
+		prepareAddresses(_id).filter((a) => a.realTime && ![579, 1518, 1523].includes(a.id)),
+		["grupo"]
+	);
+};
 
 const datosEventosFijos = _.orderBy(
 	addresses.filter((a) => [512, 513, 514, 515, 516, 517, 520, 3113].includes(a.id)),
@@ -87,6 +148,8 @@ const Resumen = {
 		 * Obtenemos el Producto Actual con sus datos.
 		 */
 		const Producto = await Graficables.ProductoActual(_id);
+
+		console.log("Producto", Producto);
 
 		/**
 		 * Obtengo todos los datos que tenga guardados hasta el momento para esta Partida.
@@ -505,11 +568,11 @@ const Resumen = {
 };
 
 const Graficables = {
-	AddressRealTime: () => datosAMostrar,
+	AddressRealTime: (_id: number) => datosAMostrar(_id),
 	RealTimeAll: async (_id: number) => {
 		try {
 			// La última lectura del address que se le pasa a la consulta.
-			const options = { sort: { startTime: -1 }, limit: 1 };
+			const options = { sort: { startTime: -1 }, limit: 2 };
 
 			const query = {
 				id: {
@@ -524,18 +587,15 @@ const Graficables = {
 				getDatos("Eventos", { ...query, ...{ id: { $eq: e.id } } }, options)
 			);
 
-			// const datos = await getDatos("Eventos", { ...query }, options);
 			const _datos = await Promise.all(_datosPrep);
+
+			// Al usar Promise.all pueden venir ciertas consultas como null. Las filtramos.
 			const datos = _datos.map((d) => d[0]).filter((d) => d !== undefined);
 
 			const eventos: Address[] = [];
 
-			// console.log(datos);
-
 			for await (const addr of datosEventosFijos) {
 				const dato = datos.find((d) => d.id == addr.id);
-
-				// console.log(dato);
 
 				if (dato == undefined) continue;
 
@@ -547,20 +607,6 @@ const Graficables = {
 					value: _val.trim(),
 				});
 			}
-
-			// const client = await PLCClient(_id);
-
-			// for await (const addr of datosEventosFijos) {
-			// 	const {
-			// 		data: [_val],
-			// 	} = await client.readHoldingRegisters(addr.id, 1);
-
-			// 	eventos.push({
-			// 		id: addr.id,
-			// 		descripcion: addr.descripcion.trim().toUpperCase(),
-			// 		value: _val.toString(),
-			// 	});
-			// }
 
 			const addrPartidaI = 1712;
 			const addrPartidaII = 1727;
@@ -575,14 +621,6 @@ const Graficables = {
 
 			const { value: _partidaI } = datosII.find((d) => d.id == addrPartidaI) ?? { value: "0" };
 			const { value: _partidaII } = datosII.find((d) => d.id == addrPartidaII) ?? { value: "0" };
-
-			// const {
-			// 	data: [_partidaI],
-			// } = await client.readHoldingRegisters(addrPartidaI, 1);
-
-			// const {
-			// 	data: [_partidaII],
-			// } = await client.readHoldingRegisters(addrPartidaII, 1);
 
 			let CodProducto = "";
 			let DescProducto = "";
@@ -616,7 +654,7 @@ const Graficables = {
 	EstadosEventosFijos: async (_id: number) => {
 		try {
 			// La última lectura del address que se le pasa a la consulta.
-			const options = { sort: { startTime: -1 }, limit: 1 };
+			const options = { sort: { startTime: -1 }, limit: datosEventosFijos.length };
 
 			const query = {
 				id: {
@@ -656,7 +694,7 @@ const Graficables = {
 		}
 	},
 	ProductoActual: async (_id: number) => {
-		const options = { sort: { startTime: -1 }, limit: 1 };
+		const options = { sort: { startTime: -1 }, limit: 2 };
 
 		const query = {
 			id: {
@@ -678,14 +716,16 @@ const Graficables = {
 
 		if (!datosII) throw new Error("Partida no determinada");
 
-		const { value: _partidaI } = datosII.find((d) => d.id == addrPartidaI) ?? { value: "0" };
-		const { value: _partidaII } = datosII.find((d) => d.id == addrPartidaII) ?? { value: "0" };
+		const { value: _partidaI } = datosII.find((d) => d.id == 1712) ?? { value: "0" };
+		const { value: _partidaII } = datosII.find((d) => d.id == 1727) ?? { value: "0" };
+
+		console.log(datosII.find((d) => d.id == 1727));
 
 		let CodProducto = "";
 		let DescProducto = "";
 		let KilosProducto = 0.0;
 
-		let Partida = `${_partidaI.padEnd(3, "0")}${_partidaII.padStart(3, "0")}`;
+		let Partida = `${_partidaI}${_partidaII}`;
 
 		const {
 			recordset: [prod],
@@ -702,6 +742,7 @@ const Graficables = {
 			CodProducto,
 			DescProducto,
 			KilosProducto,
+			bla: datosII.find((d) => d.id == 1727),
 		};
 	},
 	ProductoPorPartida: async (_partida: string) => {
@@ -729,10 +770,13 @@ const Graficables = {
 	GetValoresActuales: async (_id: number): Promise<Address[]> => {
 		try {
 			// La última lectura del address que se le pasa a la consulta.
-			const options = { sort: { startTime: -1 }, limit: datosAMostrar.length };
+			const options = { sort: { startTime: -1 }, limit: datosAMostrar(_id).length };
 			const query = {
 				id: {
-					$in: [...datosAMostrar.map((a) => a.id)],
+					$in: [
+						...datosAMostrar(_id).map((a) => a.id),
+						...((addressesRedirected as IAddressRedirected)[_id] || []).map((e) => e.to),
+					],
 				},
 				id_device: {
 					$eq: _id,
@@ -741,11 +785,11 @@ const Graficables = {
 
 			const datos = await getDatos("Data", { ...query }, options);
 
-			// console.log(datos);
-
 			const resp: Address[] = [];
 
-			for await (const addr of datosAMostrar) {
+			let cleanResults = false;
+
+			for await (const addr of datosAMostrar(_id)) {
 				const data = datos.find((d) => d.id == addr.id);
 
 				if (data == undefined) continue;
@@ -753,12 +797,30 @@ const Graficables = {
 				let _val = data.value.trim();
 				let _valSeteo = "0";
 
+				/**
+				 * Norma:
+				 *  569 -> Real | 568 -> seteo
+				 *
+				 * Redireccionado:
+				 *  568 -> Real | 566 -> Seteo
+				 */
 				switch (addr.id) {
 					case 569:
+						// console.log(datos);
 						({ value: _valSeteo } = datos.find((d) => d.id == 568) ?? { value: "0" });
+						const idx = datos.findIndex((d) => d.id == 568);
+						if (idx > -1) cleanResults = true;
 						break;
 					case 580:
 						({ value: _valSeteo } = datos.find((d) => d.id == 579) ?? { value: "0" });
+					case 568:
+						if ((addressesRedirected as IAddressRedirected)[_id] != undefined) {
+							// addr.id == 568 -> d.from deberia ser == 568 y buscar la direccion en d.to de esa redireccion.
+							const add_ = (addressesRedirected as IAddressRedirected)[_id].find((d) => d.from == 568);
+							if (add_) {
+								({ value: _valSeteo } = datos.find((d) => d.id == add_.to) ?? { value: "0" });
+							}
+						}
 						break;
 					default:
 						break;
@@ -781,6 +843,21 @@ const Graficables = {
 					unidad: addr.unidad,
 					seteo: valSeteo,
 				} as Address);
+			}
+
+			// Removemos las redirecciones de los resultados a enviar al consultante.
+			if ((addressesRedirected as IAddressRedirected)[_id]) {
+				// Busco las redirecciones del equipo.
+				const redirecciones = (addressesRedirected as IAddressRedirected)[_id].filter((r) => r.remove);
+
+				// Elimino una por una buscando la referencia de la posicion dentro de los resultados.
+				for (const red_ of redirecciones) {
+					const idx = resp.findIndex((d) => d.id == red_.to);
+					if (idx > -1) resp.splice(idx, 1); // Borro del original
+				}
+			} else {
+				const idx = resp.findIndex((d) => d.id == 568);
+				if (idx > -1) resp.splice(idx, 1);
 			}
 
 			return resp;
@@ -813,26 +890,21 @@ const Graficables = {
 	},
 	PorPeriodo: async (
 		address: string,
-		start: number | string,
-		end: number | string,
+		periodo: number | string,
 		partida: number | string,
-		_id: number
+		_id: number,
+		_estado: number = 1
 	) => {
 		try {
 			if (partida == "0") {
 				const _prod = await Graficables.ProductoActual(_id);
-				console.log(_prod);
 				partida = _prod.Partida;
 			}
 
 			let partidaFiltro = partida != "0" ? ` AND Partida = '${partida}'` : "";
 
-			console.log(
-				`SELECT * FROM PLCDatos WHERE Address = '${address}' ${partidaFiltro} AND StartTime >= '${start}' AND EndTime <= '${end}' ORDER BY ID`
-			);
-
 			const { recordset } = await new sql.Request().query(
-				`SELECT * FROM PLCDatos WHERE Address = '${address}' ${partidaFiltro} AND StartTime >= '${start}' AND EndTime <= '${end}' ORDER BY ID`
+				`SELECT * FROM PLCDatos WHERE Address = '${address}' ${partidaFiltro} AND Encendido = 1 AND StartTime >= (SELECT Max(StartTime) FROM PlcDatos WHERE Address = '${address}' AND Encendido = ${_estado} ${partidaFiltro}) - ${periodo}  AND EndTime <= (SELECT Max(EndTime) FROM PlcDatos WHERE Address = ${address} AND Encendido = ${_estado} ${partidaFiltro}) ORDER BY ID`
 			);
 
 			return recordset;

@@ -462,3 +462,18 @@ export const addresses = [
 		grupo: 99,
 	},
 ];
+
+export const addressesRedirected = {
+	2: [
+		{
+			from: 568,
+			to: 566,
+			remove: true,
+		},
+		{
+			from: 569,
+			to: 568,
+			remove: false,
+		},
+	],
+};

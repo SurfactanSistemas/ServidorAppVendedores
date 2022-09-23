@@ -7,9 +7,10 @@ import { CustomError } from "../../../Utils/CustomError";
 
 const router = express.Router();
 
-router.get("/datos/realTime/direcciones", async (req, res) => {
+router.get("/datos/realTime/direcciones/:id", async (req, res) => {
 	try {
-		const resultados = Graficables.AddressRealTime();
+		const { id } = req.params;
+		const resultados = Graficables.AddressRealTime(parseInt(id));
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
@@ -134,7 +135,12 @@ router.get("/datos/graficables/:address/:start/:end/:partida/:id", async (req, r
 
 		console.log(address, start, end, partida, id);
 
-		const resultados = await Graficables.PorPeriodo(address, start, end, partida, parseInt(id));
+		const resultados = await Graficables.PorPeriodo(
+			address,
+			parseInt(end) - parseInt(start),
+			partida,
+			parseInt(id)
+		);
 
 		res.json({ error: false, resultados, errorMsg: "" });
 	} catch (err) {
