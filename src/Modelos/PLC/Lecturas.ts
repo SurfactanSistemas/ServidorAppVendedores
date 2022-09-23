@@ -125,12 +125,6 @@ const prepareAddresses = (_id_device: number) => {
 };
 
 const datosAMostrar = (_id: number) => {
-	let add_ = 568;
-
-	if ((addressesRedirected as IAddressRedirected)[_id]) {
-		const _add = (addressesRedirected as IAddressRedirected)[_id].find((e) => e.from == 568);
-		if (_add) add_ = _add.to;
-	}
 	return _.orderBy(
 		prepareAddresses(_id).filter((a) => a.realTime && ![579, 1518, 1523].includes(a.id)),
 		["grupo"]
@@ -568,7 +562,28 @@ const Resumen = {
 };
 
 const Graficables = {
-	AddressRealTime: (_id: number) => datosAMostrar(_id),
+	AddressRealTime: (_id: number) => {
+		const datos = datosAMostrar(_id).map((d) => {
+			return { ...d };
+		});
+
+		// Removemos las redirecciones de los resultados a enviar al consultante.
+		if ((addressesRedirected as IAddressRedirected)[_id]) {
+			// Busco las redirecciones del equipo.
+			const redirecciones = (addressesRedirected as IAddressRedirected)[_id].filter((r) => r.remove);
+
+			// Elimino una por una buscando la referencia de la posicion dentro de los resultados.
+			for (const red_ of redirecciones) {
+				const idx = datos.findIndex((d) => d.id == red_.to);
+				if (idx > -1) datos.splice(idx, 1); // Borro del original
+			}
+		} else {
+			const idx = datos.findIndex((d) => d.id == 568);
+			if (idx > -1) datos.splice(idx, 1);
+		}
+
+		return datos;
+	},
 	RealTimeAll: async (_id: number) => {
 		try {
 			// La última lectura del address que se le pasa a la consulta.

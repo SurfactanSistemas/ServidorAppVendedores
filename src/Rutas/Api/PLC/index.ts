@@ -196,7 +196,6 @@ router.get("/status/:id", async (req, res) => {
 
 		let { alive: resultados, times } = await ping.promise.probe(SECADORA_IP_LOCAL, {
 			timeout: 1,
-			extra: ["-n", "4"],
 		});
 
 		if (resultados) {
