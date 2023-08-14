@@ -12,17 +12,17 @@ dotenv.config();
  */
 
 import {
-	Login,
-	Muestras,
-	Estadisticas,
-	Precios,
-	CtasCtes,
-	Pedidos,
-	AniosFiltro,
-	Proveedores,
-	ColectoraHojaRuta,
-	ClientesWeb,
-	PLC,
+    Login,
+    Muestras,
+    Estadisticas,
+    Precios,
+    CtasCtes,
+    Pedidos,
+    AniosFiltro,
+    Proveedores,
+    ColectoraHojaRuta,
+    ClientesWeb,
+    PLC,
 } from "./Rutas";
 import path from "path";
 
@@ -31,53 +31,53 @@ import path from "path";
  */
 
 const init = async () => {
-	// Abrimos la conexión con la BD.
-	await sql.connect(ConfigDb);
+    // Abrimos la conexión con la BD.
+    await sql.connect(ConfigDb);
 
-	// Inicializamos express para manejar el enrutamiento.
-	const app = express();
+    // Inicializamos express para manejar el enrutamiento.
+    const app = express();
 
-	app.use(express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
-	app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
-	app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
-	app.use("/admin/historial", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
-	app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+    app.use(express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+    app.use("/admin/dashboard", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+    app.use("/admin/monitoreo", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+    app.use("/admin/historial", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
+    app.use("/admin/historial/partidas", express.static(__dirname + "/../Vistas/PLC/Monitor/build"));
 
-	app.use("/Alarmas", express.static("./ControlAlarmas"));
+    app.use("/Alarmas", express.static("./ControlAlarmas"));
 
-	app.use(express.json());
-	app.use(bodyParser.json());
+    app.use(express.json());
+    app.use(bodyParser.json());
 
-	/*
-	 * Rutas para redireccion de Páginas Estáticas.
-	 */
-	app.get("/", (_req, res) =>
-		res.sendFile(path.resolve(__dirname + "/../Vistas/PLC/Monitor/build/static/index.html"))
-	);
+    /*
+     * Rutas para redireccion de Páginas Estáticas.
+     */
+    app.get("/", (_req, res) =>
+        res.sendFile(path.resolve(__dirname + "/../Vistas/PLC/Monitor/build/static/index.html"))
+    );
 
-	/*
-	 * Rutas para la App de los Vendedores.
-	 */
-	app.use("/Api/Muestras", Muestras);
+    /*
+     * Rutas para la App de los Vendedores.
+     */
+    app.use("/Api/Muestras", Muestras);
 
-	app.use("/Api/Estadisticas", Estadisticas);
+    app.use("/Api/Estadisticas", Estadisticas);
 
-	app.use("/Api/Precios", Precios);
-	app.use("/Api/CtasCtes", CtasCtes);
+    app.use("/Api/Precios", Precios);
+    app.use("/Api/CtasCtes", CtasCtes);
 
-	app.use("/Api/Pedidos", Pedidos);
+    app.use("/Api/Pedidos", Pedidos);
 
-	app.use("/Api/Login", Login);
+    app.use("/Api/Login", Login);
 
-	app.use("/Api/AniosFiltro", AniosFiltro);
-	app.use("/Api/Proveedores", cors(), Proveedores);
-	app.use("/Api/Colectora/HojaRuta", cors(), ColectoraHojaRuta);
-	app.use("/Api/Clientes", cors(), ClientesWeb);
-	app.use("/Api/PLC", cors(), PLC);
+    app.use("/Api/AniosFiltro", AniosFiltro);
+    app.use("/Api/Proveedores", cors(), Proveedores);
+    app.use("/Api/Colectora/HojaRuta", cors(), ColectoraHojaRuta);
+    app.use("/Api/Clientes", cors(), ClientesWeb);
+    app.use("/Api/PLC", cors(), PLC);
 
-	const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 80;
 
-	app.listen(PORT, () => console.log(`Servidor corriendo en ${PORT}`));
+    app.listen(PORT, () => console.log(`Servidor corriendo en ${PORT}`));
 };
 
 init();
