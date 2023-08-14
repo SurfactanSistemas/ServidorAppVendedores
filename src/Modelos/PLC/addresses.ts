@@ -476,4 +476,16 @@ export const addressesRedirected = {
 			remove: false,
 		},
 	],
+	3: [
+		{
+			from: 568,
+			to: 566,
+			remove: true,
+		},
+		{
+			from: 569,
+			to: 568,
+			remove: false,
+		},
+	],
 };

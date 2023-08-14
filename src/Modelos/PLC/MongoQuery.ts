@@ -21,7 +21,7 @@ const PLCDataSchema = () =>
 		id_device: Number,
 	});
 
-const connectMongoDb = async () => await mongoose.connect("mongodb://desarrollo:desarrollo@193.168.0.147:27017/plc");
+const connectMongoDb = async () => await mongoose.connect("mongodb://usuarioadmin:usuarioadmin@193.168.0.12:27017/plc");
 
 export const getDatos = async (model: string, query: object, options: object = {}): Promise<IData[]> => {
 	await connectMongoDb();

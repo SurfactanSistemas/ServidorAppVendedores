@@ -95,7 +95,6 @@ interface ITemp {
 }
 
 const prepareAddresses = (_id_device: number) => {
-	console.log(typeof addresses, addresses.length);
 	let _addresses = addresses.map((a) => {
 		return { ...a };
 	});
@@ -126,7 +125,7 @@ const prepareAddresses = (_id_device: number) => {
 
 const datosAMostrar = (_id: number) => {
 	return _.orderBy(
-		prepareAddresses(_id).filter((a) => a.realTime && ![579, 1518, 1523].includes(a.id)),
+		prepareAddresses(_id).filter((a) => a.realTime && ![518, 1523].includes(a.id)),
 		["grupo"]
 	);
 };
@@ -142,8 +141,6 @@ const Resumen = {
 		 * Obtenemos el Producto Actual con sus datos.
 		 */
 		const Producto = await Graficables.ProductoActual(_id);
-
-		console.log("Producto", Producto);
 
 		/**
 		 * Obtengo todos los datos que tenga guardados hasta el momento para esta Partida.
@@ -734,8 +731,6 @@ const Graficables = {
 		const { value: _partidaI } = datosII.find((d) => d.id == 1712) ?? { value: "0" };
 		const { value: _partidaII } = datosII.find((d) => d.id == 1727) ?? { value: "0" };
 
-		console.log(datosII.find((d) => d.id == 1727));
-
 		let CodProducto = "";
 		let DescProducto = "";
 		let KilosProducto = 0.0;
@@ -821,13 +816,13 @@ const Graficables = {
 				 */
 				switch (addr.id) {
 					case 569:
-						// console.log(datos);
 						({ value: _valSeteo } = datos.find((d) => d.id == 568) ?? { value: "0" });
 						const idx = datos.findIndex((d) => d.id == 568);
 						if (idx > -1) cleanResults = true;
 						break;
 					case 580:
 						({ value: _valSeteo } = datos.find((d) => d.id == 579) ?? { value: "0" });
+						break;
 					case 568:
 						if ((addressesRedirected as IAddressRedirected)[_id] != undefined) {
 							// addr.id == 568 -> d.from deberia ser == 568 y buscar la direccion en d.to de esa redireccion.
@@ -849,8 +844,6 @@ const Graficables = {
 					valSeteo = (parseFloat(_valSeteo) / Math.pow(10, addr.precision)).toFixed(addr.precision);
 				}
 
-				// console.log(val, _val, valSeteo, _valSeteo);
-
 				resp.push({
 					id: addr.id,
 					descripcion: addr.descripcion.trim().toUpperCase(),
@@ -871,9 +864,12 @@ const Graficables = {
 					if (idx > -1) resp.splice(idx, 1); // Borro del original
 				}
 			} else {
-				const idx = resp.findIndex((d) => d.id == 568);
+				let idx = resp.findIndex((d) => d.id == 568);
 				if (idx > -1) resp.splice(idx, 1);
 			}
+
+			const idx = resp.findIndex((d) => d.id == 579);
+			if (idx > -1) resp.splice(idx, 1);
 
 			return resp;
 		} catch (error) {
